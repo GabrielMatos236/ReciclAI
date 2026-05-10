@@ -1,16 +1,54 @@
-# React + Vite
+# ReciclAI 🌱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+App web sustentável que usa IA para classificar resíduos e indicar a lixeira correta no campus.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologias
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + Vite
+- Tailwind CSS
+- Claude API (Anthropic) — classificação de imagens
+- Supabase — autenticação e banco de dados
+- Leaflet — mapas interativos
+- React Router — navegação
 
-## React Compiler
+## 📦 Como rodar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Clone o repositório:
+\`\`\`bash
+git clone https://github.com/SEU-USUARIO/reciclai.git
+cd reciclai
+\`\`\`
 
-## Expanding the ESLint configuration
+2. Instale as dependências:
+\`\`\`bash
+npm install
+\`\`\`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Crie um arquivo `.env` na raiz com:
+\`\`\`
+VITE_ANTHROPIC_API_KEY=sua_chave
+VITE_SUPABASE_URL=sua_url
+VITE_SUPABASE_ANON_KEY=sua_key
+\`\`\`
+
+4. Rode o projeto:
+\`\`\`bash
+npm run dev
+\`\`\`
+
+## ✨ Funcionalidades
+
+- 🔐 Autenticação (usuário e funcionário)
+- 📸 Análise de descarte com IA (Claude)
+- 🗺️ Mapa do campus com pontos de coleta
+- 🏆 Sistema de pontos e gamificação
+- 🚨 Reportar lixeiras com problemas
+
+## 👥 Autores
+
+- Gabriel Ataide
+- Rafael Cerutti
+
+## 📄 Licença
+
+Trabalho acadêmico - 2026

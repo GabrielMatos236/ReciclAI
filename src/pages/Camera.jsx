@@ -193,7 +193,6 @@ function Camera() {
                     </>
                 )}
             </div>
-
             <BarraNavegacao />
         </div>
     )
