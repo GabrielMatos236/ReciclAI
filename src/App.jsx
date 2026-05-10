@@ -3,6 +3,7 @@ import Login from "./pages/Login"
 import Home from "./pages/Home"
 import Camera from "./pages/Camera"
 import Mapa from "./pages/Mapa"
+import MobileFrame from './components/MobileFrame'
 
 function App() {
   return (
