@@ -39,7 +39,7 @@ function Login() {
         </button>
         
         <p className="text-center text-gray-600 mt-4 text-sm">
-          Não tem conta? <span className="text-purple-700 font-semibold cursor-pointer">Cadastre-se</span>
+          Não tem conta? <span onClick={() => navigate("/cadastro")} className="text-purple-700 font-semibold cursor-pointer">Cadastre-se</span>
         </p>
       </div>
       
