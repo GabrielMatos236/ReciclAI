@@ -4,6 +4,8 @@ import Home from "./pages/Home"
 import Camera from "./pages/Camera"
 import Mapa from "./pages/Mapa"
 import Cadastro from "./pages/Cadastro"
+import CriarChamado from "./pages/CriarChamado"
+import TelaFuncionario from "./pages/TelaFuncionario"
 import RotaPrivada from "./components/RotaPrivada"
 import MobileFrame from './components/MobileFrame'
 
