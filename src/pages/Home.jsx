@@ -53,7 +53,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
-      {/* Header com gradiente AZUL diagonal, borda inferior reta */}
+      {/* Header */}
       <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
         <div className="flex justify-between items-center mb-8">
           <img src={Text} alt="ReciclAI" className="h-10" />
@@ -71,7 +71,7 @@ function Home() {
         </h2>
       </div>
 
-      {/* Card grande do meio — chamados + pontos */}
+      {/* Card */}
       <div className="px-6 -mt-14">
         <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
@@ -92,7 +92,7 @@ function Home() {
         </div>
       </div>
 
-      {/* 4 quadradinhos em linha, mais espaçados e menores */}
+      {/* Botões Funcionalidades */}
       <div className="px-6 mt-5 flex justify-between gap-3">
 
         {/* TODO: criar rota /chamados depois */}
@@ -132,7 +132,7 @@ function Home() {
 
       </div>
 
-      {/* Card "SCAN IT" — branco com borda */}
+      {/* Card SCAN IT */}
       <div className="px-6 mt-5">
         <button
           onClick={() => navigate('/camera')}

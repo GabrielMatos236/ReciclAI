@@ -64,7 +64,7 @@ function Camera() {
         'Cinza': 'bg-gray-500'
     }
 
-    // Header igual ao estado inicial — reutilizado nos 3 estados
+    // Header
     const Header = () => (
         <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center flex-shrink-0">
             <h1 className="text-white text-2xl font-bold tracking-wide">
@@ -85,7 +85,7 @@ function Camera() {
             <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
                 <Header />
 
-                {/* Área da foto — mesmo espaço da linha tracejada */}
+                {/* Área da foto */}
                 <div className="flex-1 px-4 pt-4 pb-32 relative">
                     <div className="h-full rounded-3xl overflow-hidden relative">
 
@@ -107,12 +107,11 @@ function Camera() {
                             <X size={20} className="text-white" />
                         </button>
 
-                        {/* Card de resultado — parte inferior da foto */}
-                        {/* Card de resultado — ocupa mais espaço da foto */}
+                        {/* Card de resultado */}
                         <div className="absolute bottom-0 left-0 right-0 top-[40%] p-4 z-10 flex flex-col justify-end">
                             <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-2xl">
 
-                                {/* Tipo + Lixeira na mesma linha */}
+                                {/* Tipo e Lixeira na mesma linha */}
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
                                         <p className="text-gray-400 text-[10px] uppercase tracking-wider">Resíduo</p>
@@ -127,7 +126,7 @@ function Camera() {
                                 {/* Divisor */}
                                 <div className="h-px bg-gray-200 mb-3" />
 
-                                {/* Explicação — sem corte */}
+                                {/* Explicação */}
                                 <p className="text-gray-700 text-sm leading-snug mb-3">
                                     {resultado.explicacao}
                                 </p>
@@ -171,7 +170,7 @@ function Camera() {
             <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
                 <Header />
 
-                {/* Área da foto — mesmo espaço da linha tracejada */}
+                {/* Área da foto */}
                 <div className="flex-1 px-4 pt-4 pb-32 relative">
                     <div className="h-full rounded-3xl overflow-hidden relative">
 
@@ -190,7 +189,7 @@ function Camera() {
                             <X size={20} className="text-white" />
                         </button>
 
-                        {/* Botão Analisar — sobreposto, parte de baixo, com transparência */}
+                        {/* Botão Analisar */}
                         <div className="absolute bottom-4 left-4 right-4 z-10">
                             <button
                                 onClick={analisar}

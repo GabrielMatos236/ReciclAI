@@ -62,14 +62,12 @@ function criarIcone(cor) {
 function Mapa() {
   const location = useLocation()
 
-  // Filtro de tipo vem da Camera se disponível
   const [filtroPredio, setFiltroPredio] = useState(null)
   const [filtroTipo,   setFiltroTipo]   = useState(location.state?.filtroTipo || null)
   const [painelAberto, setPainelAberto] = useState(!!location.state?.filtroTipo)
 
   const centroMapa = [-30.033217, -51.122785]
 
-  // Aplica os dois filtros combinados
   const lixeirasFiltradas = LIXEIRAS.filter(l => {
     const passaPredio = !filtroPredio || l.predio === filtroPredio
     const passaTipo   = !filtroTipo   || l.tipo   === filtroTipo
@@ -132,7 +130,7 @@ function Mapa() {
         </div>
       </div>
 
-      {/* Painel de filtro — abre pra cima */}
+      {/* Painel de filtro */}
       <div className="px-4 pb-24 flex-shrink-0">
 
         {/* Botão de abrir/fechar painel */}
