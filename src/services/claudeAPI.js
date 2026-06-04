@@ -7,8 +7,8 @@ export async function analisarImagem(imagemBase64, mediaType) {
 {
   "tipoResiduo": "string (ex: Plástico, Papel, Vidro, Metal, Orgânico, Eletrônico, Não-reciclável)",
   "lixeira": "string (cor da lixeira: Vermelha, Azul, Verde, Amarela, Marrom, Cinza)",
-  "explicacao": "string curta de no máximo 2 frases explicando por que vai nessa lixeira",
-  "dica": "string curta com uma dica de descarte sustentável relacionada"
+  "explicacao": "string de NO MÁXIMO 100 CARACTERES explicando por que vai nessa lixeira",
+  "dica": "string de NO MÁXIMO 80 CARACTERES com uma dica de descarte"
 }
 
 Cores das lixeiras (padrão brasileiro):
@@ -18,6 +18,8 @@ Cores das lixeiras (padrão brasileiro):
 - Amarela: Metal
 - Marrom: Orgânico
 - Cinza: Não-reciclável / Rejeito
+
+IMPORTANTE: explicacao e dica devem ser extremamente curtas e diretas. Sem rodeios.
 
 Se não identificar nenhum objeto descartável claro, retorne tipoResiduo "Indefinido".`
 
@@ -63,5 +65,5 @@ Se não identificar nenhum objeto descartável claro, retorne tipoResiduo "Indef
   let textoResposta = data.content[0].text
   textoResposta = textoResposta.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
 
-return JSON.parse(textoResposta)
+  return JSON.parse(textoResposta)
 }
