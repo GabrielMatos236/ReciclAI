@@ -16,6 +16,7 @@ const CONFIG_CORES = {
   'Cinza':    { hex: '#6b7280', iconUrl: 'grey' }
 }
 
+<<<<<<< Updated upstream
 function Mapa() {
   const centroMapa = [-30.033217502718294, -51.1227849300074]
   
@@ -54,6 +55,28 @@ function Mapa() {
       iconAnchor: [12, 41],
       popupAnchor: [1, -34]
     })
+=======
+function Mapa({ barra = <BarraNavegacao /> }) {
+  const location = useLocation()
+
+  const [filtroPredio, setFiltroPredio] = useState(null)
+  const [filtroTipo,   setFiltroTipo]   = useState(location.state?.filtroTipo || null)
+  const [painelAberto, setPainelAberto] = useState(!!location.state?.filtroTipo)
+
+  const centroMapa = [-30.033217, -51.122785]
+
+  const lixeirasFiltradas = LIXEIRAS.filter(l => {
+    const passaPredio = !filtroPredio || l.predio === filtroPredio
+    const passaTipo   = !filtroTipo   || l.tipo   === filtroTipo
+    return passaPredio && passaTipo
+  })
+
+  const temFiltroAtivo = filtroPredio || filtroTipo
+
+  function limparFiltros() {
+    setFiltroPredio(null)
+    setFiltroTipo(null)
+>>>>>>> Stashed changes
   }
   
   return (
@@ -131,8 +154,13 @@ function Mapa() {
           </div>
         </div>
       </div>
+<<<<<<< Updated upstream
       
       <BarraNavegacao />
+=======
+
+      {barra}
+>>>>>>> Stashed changes
     </div>
   )
 }

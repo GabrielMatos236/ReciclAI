@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, CheckCircle, XCircle, ClipboardCheck, Clock } from "lucide-react"
 import { supabase } from "../services/supabase"
+import Text from "../assets/Text.png"
 
 function FuncionarioChamados() {
   const navigate = useNavigate()
@@ -70,40 +71,62 @@ function FuncionarioChamados() {
     if (status === "pendente") return "bg-yellow-100 text-yellow-800"
     if (status === "aceito") return "bg-blue-100 text-blue-800"
     if (status === "rejeitado") return "bg-red-100 text-red-800"
-    if (status === "encerrado") return "bg-green-100 text-green-800"
+    if (status === "encerrado") return "bg-emerald-100 text-emerald-800"
     return "bg-gray-100 text-gray-800"
   }
 
   return (
     <div className="min-h-screen bg-gray-100 pb-8">
 
-      <div className="bg-purple-900 px-6 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex items-center gap-4">
+      {/* Header */}
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
+        <div className="flex justify-between items-center mb-8">
+          <img src={Text} alt="ReciclAI" className="h-10" />
+
           <button
             onClick={() => navigate("/funcionario/home")}
-            className="bg-purple-700 p-2 rounded-full cursor-pointer hover:bg-purple-600 transition"
+            className="bg-blue-800 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
+            title="Voltar"
           >
-            <ArrowLeft size={24} className="text-white" />
+            <ArrowLeft size={22} className="text-white" />
           </button>
+        </div>
 
-          <div>
-            <h1 className="text-white text-2xl font-bold">
-              Chamados
-            </h1>
-            <p className="text-purple-100 text-sm">
-              Gerencie as solicitações dos usuários
-            </p>
+        <h2 className="text-white text-lg font-semibold ml-4">
+          Chamados
+        </h2>
+
+        <p className="text-blue-100 text-sm ml-4 mt-1">
+          Gerencie as solicitações dos usuários
+        </p>
+      </div>
+
+      {/* Card de destaque */}
+      <div className="px-6 -mt-14">
+        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <ClipboardCheck size={30} className="text-blue-900" strokeWidth={2.5} />
+            <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
+
+          <h3 className="text-blue-900 text-xl font-bold">
+            Solicitações de manutenção
+          </h3>
+
+          <p className="text-blue-900 text-sm mt-1">
+            Acompanhe chamados pendentes e encerrados.
+          </p>
         </div>
       </div>
 
-      <div className="px-6 mt-6">
-        <div className="bg-white rounded-full p-1 flex shadow">
+      {/* Abas */}
+      <div className="px-6 mt-5">
+        <div className="bg-white rounded-full p-1 flex shadow-lg">
           <button
             onClick={() => setAba("pendentes")}
             className={`flex-1 py-3 rounded-full font-semibold transition cursor-pointer ${
               aba === "pendentes"
-                ? "bg-purple-900 text-white"
+                ? "bg-blue-900 text-white"
                 : "text-gray-500"
             }`}
           >
@@ -114,7 +137,7 @@ function FuncionarioChamados() {
             onClick={() => setAba("encerrados")}
             className={`flex-1 py-3 rounded-full font-semibold transition cursor-pointer ${
               aba === "encerrados"
-                ? "bg-purple-900 text-white"
+                ? "bg-blue-900 text-white"
                 : "text-gray-500"
             }`}
           >
@@ -123,7 +146,8 @@ function FuncionarioChamados() {
         </div>
       </div>
 
-      <div className="px-6 mt-6">
+      {/* Conteúdo */}
+      <div className="px-6 mt-5">
         {erro && (
           <div className="bg-red-100 border border-red-300 text-red-800 p-3 rounded-xl mb-4 text-sm">
             {erro}
@@ -131,17 +155,19 @@ function FuncionarioChamados() {
         )}
 
         {carregando && (
-          <p className="text-purple-900 font-semibold text-center">
+          <p className="text-blue-900 font-semibold text-center">
             Carregando chamados...
           </p>
         )}
 
         {!carregando && chamados.length === 0 && (
-          <div className="bg-white rounded-3xl p-6 shadow text-center">
-            <ClipboardCheck size={42} className="text-purple-900 mx-auto mb-3" />
-            <h2 className="text-purple-900 font-bold text-lg">
+          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
+            <ClipboardCheck size={42} className="text-blue-900 mx-auto mb-3" />
+
+            <h2 className="text-blue-900 font-bold text-lg">
               Nenhum chamado encontrado
             </h2>
+
             <p className="text-gray-500 text-sm mt-1">
               Não há chamados nesta aba no momento.
             </p>
@@ -156,7 +182,7 @@ function FuncionarioChamados() {
             >
               <div className="flex justify-between items-start gap-3 mb-3">
                 <div>
-                  <h2 className="text-purple-900 text-lg font-bold">
+                  <h2 className="text-blue-900 text-lg font-bold">
                     {chamado.tipo}
                   </h2>
 
@@ -173,16 +199,24 @@ function FuncionarioChamados() {
 
               <div className="bg-gray-100 rounded-2xl p-4 space-y-2">
                 <p className="text-gray-700">
-                  <strong className="text-purple-900">Lixeira:</strong>{" "}
+                  <strong className="text-blue-900">Descrição:</strong>{" "}
                   {chamado.descricao}
                 </p>
+
+                {chamado.foto_url && (
+                  <img
+                    src={chamado.foto_url}
+                    alt="Foto do chamado"
+                    className="w-full rounded-xl mt-3"
+                  />
+                )}
               </div>
 
               {aba === "pendentes" && (
                 <div className="mt-4 space-y-2">
                   <button
                     onClick={() => atualizarStatus(chamado.id, "aceito")}
-                    className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-700 transition"
+                    className="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-800 transition"
                   >
                     <Clock size={18} />
                     Aceitar
@@ -199,7 +233,7 @@ function FuncionarioChamados() {
 
                     <button
                       onClick={() => atualizarStatus(chamado.id, "encerrado")}
-                      className="bg-green-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-green-700 transition"
+                      className="bg-emerald-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-emerald-600 transition"
                     >
                       <CheckCircle size={18} />
                       Realizado

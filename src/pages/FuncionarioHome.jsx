@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ClipboardList, MapPin, LogOut, CheckCircle, Clock } from "lucide-react"
+import { ClipboardList, MapPin, LogOut, CheckCircle2, Clock } from "lucide-react"
 import { supabase } from "../services/supabase"
 import Text from "../assets/Text.png"
 
@@ -55,7 +55,7 @@ function FuncionarioHome() {
   if (carregando) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-purple-900 font-semibold">Carregando...</p>
+        <p className="text-blue-900 font-semibold">Carregando...</p>
       </div>
     )
   }
@@ -63,95 +63,99 @@ function FuncionarioHome() {
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
-      <div className="bg-purple-900 px-6 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex justify-between items-center mb-6">
-          <img src={Text} alt="ReciclAI" className="h-8" />
+      {/* Header */}
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
+        <div className="flex justify-between items-center mb-8">
+          <img src={Text} alt="ReciclAI" className="h-10" />
 
           <button
             onClick={handleLogout}
-            className="bg-purple-700 p-2 rounded-full cursor-pointer hover:bg-purple-600 transition"
+            className="bg-blue-800 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
             title="Sair"
           >
-            <LogOut size={24} className="text-white" />
+            <LogOut size={22} className="text-white" />
           </button>
         </div>
 
-        <h2 className="text-white text-2xl font-bold">
-          Painel do Funcionário
+        <h2 className="text-white text-lg font-semibold ml-4">
+          olá, {perfil?.nome || "Funcionário"}!
         </h2>
 
-        <p className="text-purple-100 mt-1">
-          Olá, {perfil?.nome || "Funcionário"}!
+        <p className="text-blue-100 text-sm ml-4 mt-1">
+          Painel do funcionário
         </p>
       </div>
 
-      <div className="px-6 -mt-4">
-        <div className="bg-green-300 rounded-3xl p-6 shadow-lg">
-          <h3 className="text-purple-900 text-xl font-bold mb-4">
-            Resumo dos Chamados
-          </h3>
+      {/* Card resumo */}
+      <div className="px-6 -mt-14">
+        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <CheckCircle2 size={30} className="text-blue-900" strokeWidth={2.5} />
+            <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
+          </div>
 
           <div className="flex justify-around items-center">
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <Clock size={24} className="text-purple-900" />
+                <Clock size={22} className="text-blue-900" />
               </div>
-              <p className="text-purple-900 text-sm">Pendentes</p>
-              <p className="text-purple-900 text-3xl font-bold">{pendentes}</p>
+              <p className="text-blue-900 text-xs">Pendentes</p>
+              <p className="text-blue-900 text-2xl font-bold">{pendentes}</p>
             </div>
 
-            <div className="w-px h-14 bg-purple-900 opacity-30"></div>
+            <div className="w-px h-9 bg-blue-900 opacity-30"></div>
 
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <CheckCircle size={24} className="text-purple-900" />
+                <CheckCircle2 size={22} className="text-blue-900" />
               </div>
-              <p className="text-purple-900 text-sm">Encerrados</p>
-              <p className="text-purple-900 text-3xl font-bold">{encerrados}</p>
+              <p className="text-blue-900 text-xs">Encerrados</p>
+              <p className="text-blue-900 text-2xl font-bold">{encerrados}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-6 mt-6 space-y-4">
+      {/* Botões principais */}
+      <div className="px-6 mt-5 flex justify-between gap-3">
         <button
           onClick={() => navigate("/funcionario/chamados")}
-          className="w-full bg-white rounded-3xl p-5 shadow-lg cursor-pointer hover:shadow-xl transition text-left"
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
         >
-          <div className="flex items-center gap-4">
-            <div className="bg-green-300 rounded-2xl p-4">
-              <ClipboardList size={36} className="text-purple-900" />
-            </div>
-
-            <div>
-              <h3 className="text-purple-900 text-xl font-bold">
-                Chamados
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Aceitar, rejeitar ou encerrar solicitações
-              </p>
-            </div>
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <ClipboardList size={24} className="text-black" />
           </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">
+            Chamados
+          </span>
         </button>
 
         <button
-          onClick={() => navigate("/mapa")}
-          className="w-full bg-white rounded-3xl p-5 shadow-lg cursor-pointer hover:shadow-xl transition text-left"
+          onClick={() => navigate("/funcionario/mapa")}
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
         >
-          <div className="flex items-center gap-4">
-            <div className="bg-green-300 rounded-2xl p-4">
-              <MapPin size={36} className="text-purple-900" />
-            </div>
-
-            <div>
-              <h3 className="text-purple-900 text-xl font-bold">
-                Mapa
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Visualizar pontos de coleta do campus
-              </p>
-            </div>
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <MapPin size={24} className="text-black" />
           </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">
+            Pontos de Descarte
+          </span>
+        </button>
+      </div>
+
+      {/* Card explicativo */}
+      <div className="px-6 mt-5">
+        <button
+          onClick={() => navigate("/funcionario/chamados")}
+          className="w-full bg-white border-2 border-gray-300 rounded-3xl py-8 px-6 cursor-pointer hover:border-blue-700 transition flex flex-col items-center gap-2"
+        >
+          <ClipboardList size={36} className="text-black" strokeWidth={1.5} />
+          <span className="text-black text-base font-bold tracking-wide">
+            GERENCIAR CHAMADOS
+          </span>
+          <span className="text-gray-500 text-xs text-center">
+            Aceite, rejeite ou finalize solicitações abertas pelos usuários.
+          </span>
         </button>
       </div>
     </div>

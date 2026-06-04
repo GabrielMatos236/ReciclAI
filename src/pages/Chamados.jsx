@@ -1,42 +1,51 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, AlertTriangle, Send, ClipboardList } from "lucide-react"
+import { ArrowLeft, Trash2, Send, ClipboardList } from "lucide-react"
 import { supabase } from "../services/supabase"
 import BarraNavegacao from "../components/BarraNavegacao"
+import Text from "../assets/Text.png"
 
 function Chamados() {
   const navigate = useNavigate()
 
   const [tipo, setTipo] = useState("Lixeira cheia")
   const [descricao, setDescricao] = useState("")
+  const [aba, setAba] = useState("pendentes")
   const [meusChamados, setMeusChamados] = useState([])
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(null)
   const [sucesso, setSucesso] = useState(null)
 
-  useEffect(() => {
-    carregarMeusChamados()
-  }, [])
+useEffect(() => {
+  carregarMeusChamados()
+}, [aba])
 
-  async function carregarMeusChamados() {
-    const { data: { user } } = await supabase.auth.getUser()
+ async function carregarMeusChamados() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
 
-    if (!user) return
+  let query = supabase
+    .from("chamados")
+    .select("*")
+    .eq("usuario_id", user.id)
+    .order("created_at", { ascending: false })
 
-    const { data, error } = await supabase
-      .from("chamados")
-      .select("*")
-      .eq("usuario_id", user.id)
-      .order("created_at", { ascending: false })
-
-    if (error) {
-      console.error(error)
-      setMeusChamados([])
-      return
-    }
-
-    setMeusChamados(data || [])
+  if (aba === "pendentes") {
+   query = query.in("status", ["pendente", "aceito"])
+  } else {
+   query = query.in("status", ["encerrado", "rejeitado"])
   }
+
+  const { data, error } = await query
+
+  if (error) {
+    console.error(error)
+    setMeusChamados([])
+    return
+  }
+  setMeusChamados(data || [])
+}
+
 
   async function abrirChamado(e) {
     e.preventDefault()
@@ -88,61 +97,68 @@ function Chamados() {
     if (status === "pendente") return "bg-yellow-100 text-yellow-800"
     if (status === "aceito") return "bg-blue-100 text-blue-800"
     if (status === "rejeitado") return "bg-red-100 text-red-800"
-    if (status === "encerrado") return "bg-green-100 text-green-800"
+    if (status === "encerrado") return "bg-emerald-100 text-emerald-800"
     return "bg-gray-100 text-gray-800"
   }
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
-      <div className="bg-purple-900 px-6 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex items-center gap-4">
+      {/* Header */}
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
+        <div className="flex justify-between items-center mb-8">
+          <img src={Text} alt="ReciclAI" className="h-10" />
+
           <button
             onClick={() => navigate("/home")}
-            className="bg-purple-700 p-2 rounded-full cursor-pointer hover:bg-purple-600 transition"
+            className="bg-blue-800 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
+            title="Voltar"
           >
-            <ArrowLeft size={24} className="text-white" />
+            <ArrowLeft size={22} className="text-white" />
           </button>
-
-          <div>
-            <h1 className="text-white text-2xl font-bold">
-              Chamados
-            </h1>
-            <p className="text-purple-100 text-sm">
-              Reporte problemas nas lixeiras do campus
-            </p>
-          </div>
         </div>
+
+        <h2 className="text-white text-lg font-semibold ml-4">
+          Manutenção de Lixeiras
+        </h2>
+
+        <p className="text-blue-100 text-sm ml-4 mt-1">
+          Solicite atendimento para lixeiras do campus
+        </p>
       </div>
 
-      <div className="px-6 -mt-4">
-        <div className="bg-green-300 rounded-3xl p-6 shadow-lg">
-          <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle size={28} className="text-purple-900" />
-            <h2 className="text-purple-900 text-xl font-bold">
-              Abrir chamado
-            </h2>
+      {/* Card de destaque */}
+      <div className="px-6 -mt-14">
+        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <Trash2 size={30} className="text-blue-900" strokeWidth={2.5} />
+            <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
 
-          <p className="text-purple-900 text-sm">
-            Informe o problema encontrado em uma lixeira.
+          <h3 className="text-blue-900 text-xl font-bold">
+            Abrir chamado
+          </h3>
+
+          <p className="text-blue-900 text-sm mt-1">
+            Informe uma lixeira cheia, quebrada ou sem identificação.
           </p>
         </div>
       </div>
 
-      <div className="px-6 mt-6">
+      {/* Formulário */}
+      <div className="px-6 mt-5">
         <form
           onSubmit={abrirChamado}
           className="bg-white rounded-3xl p-6 shadow-lg"
         >
-          <label className="block text-purple-900 font-semibold mb-2">
+          <label className="block text-blue-900 font-semibold mb-2">
             Tipo do chamado
           </label>
 
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
-            className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:border-purple-600 bg-white"
+            className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-700 bg-white text-black"
           >
             <option value="Lixeira cheia">Lixeira cheia</option>
             <option value="Lixeira quebrada">Lixeira quebrada</option>
@@ -151,7 +167,7 @@ function Chamados() {
             <option value="Outro problema">Outro problema</option>
           </select>
 
-          <label className="block text-purple-900 font-semibold mb-2">
+          <label className="block text-blue-900 font-semibold mb-2">
             Descrição
           </label>
 
@@ -161,7 +177,7 @@ function Chamados() {
             onChange={(e) => setDescricao(e.target.value)}
             required
             rows={4}
-            className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:border-purple-600 resize-none"
+            className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-700 resize-none text-black"
           />
 
           {erro && (
@@ -171,7 +187,7 @@ function Chamados() {
           )}
 
           {sucesso && (
-            <div className="bg-green-100 border border-green-300 text-green-800 p-3 rounded-xl mb-4 text-sm">
+            <div className="bg-emerald-100 border border-emerald-300 text-emerald-800 p-3 rounded-xl mb-4 text-sm">
               {sucesso}
             </div>
           )}
@@ -179,7 +195,7 @@ function Chamados() {
           <button
             type="submit"
             disabled={carregando}
-            className="w-full bg-purple-900 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-purple-800 transition disabled:opacity-50"
+            className="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-800 transition disabled:opacity-50"
           >
             <Send size={18} />
             {carregando ? "Enviando..." : "Enviar chamado"}
@@ -187,21 +203,48 @@ function Chamados() {
         </form>
       </div>
 
+      {/* Lista de chamados */}
       <div className="px-6 mt-6">
-        <h2 className="text-purple-900 text-xl font-bold mb-4">
-          Meus chamados
-        </h2>
+            <h2 className="text-blue-900 text-xl font-bold mb-4">
+               Meus chamados
+            </h2>
 
-        {meusChamados.length === 0 && (
-          <div className="bg-white rounded-3xl p-6 shadow text-center">
-            <ClipboardList size={42} className="text-purple-900 mx-auto mb-3" />
+            <div className="bg-white rounded-full p-1 flex shadow-lg mb-5">
+              <button
+                 onClick={() => setAba("pendentes")}
+                className={`flex-1 py-3 rounded-full font-semibold transition cursor-pointer ${
+                  aba === "pendentes"
+                    ? "bg-blue-900 text-white"
+                    : "text-gray-500"
+                  }`}
+          >
+            Pendentes
+          </button>
 
-            <h3 className="text-purple-900 font-bold">
-              Nenhum chamado aberto
+          <button
+            onClick={() => setAba("encerrados")}
+            className={`flex-1 py-3 rounded-full font-semibold transition cursor-pointer ${
+              aba === "encerrados"
+                ? "bg-blue-900 text-white"
+                : "text-gray-500"
+            }`}
+          >
+            Encerrados
+          </button>
+      </div>
+
+       {meusChamados.length === 0 && (
+          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
+            <ClipboardList size={42} className="text-blue-900 mx-auto mb-3" />
+
+            <h3 className="text-blue-900 font-bold">
+              Nenhum chamado encontrado
             </h3>
 
             <p className="text-gray-500 text-sm mt-1">
-              Seus chamados aparecerão aqui.
+              {aba === "pendentes"
+                ? "Você não possui chamados pendentes no momento."
+                : "Você não possui chamados encerrados no momento."}
             </p>
           </div>
         )}
@@ -214,7 +257,7 @@ function Chamados() {
             >
               <div className="flex justify-between items-start gap-3 mb-3">
                 <div>
-                  <h3 className="text-purple-900 text-lg font-bold">
+                  <h3 className="text-blue-900 text-lg font-bold">
                     {chamado.tipo}
                   </h3>
 
@@ -230,7 +273,7 @@ function Chamados() {
 
               <div className="bg-gray-100 rounded-2xl p-4 space-y-2">
                 <p className="text-gray-700">
-                  <strong className="text-purple-900">Descrição:</strong>{" "}
+                  <strong className="text-blue-900">Descrição:</strong>{" "}
                   {chamado.descricao}
                 </p>
 
