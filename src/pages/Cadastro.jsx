@@ -14,33 +14,50 @@ function Cadastro() {
     const [erro, setErro] = useState(null)
 
     async function handleCadastro(e) {
-        e.preventDefault()
-        setCarregando(true)
-        setErro(null)
+    e.preventDefault()
+    setCarregando(true)
+    setErro(null)
 
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: senha,
-                options: {
-                    data: {
-                        nome: nome,
-                        tipo: tipo
-                    }
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: senha,
+            options: {
+                data: {
+                    nome: nome,
+                    tipo: tipo
                 }
-            })
+            }
+        })
 
-            if (error) throw error
+        if (error) throw error
 
-            // Sucesso! Vai pra home
-            navigate('/home')
-        } catch (err) {
-            console.error(err)
-            setErro(err.message || 'Erro ao cadastrar')
-        } finally {
-            setCarregando(false)
+        if (data.user) {
+            const { error: perfilError } = await supabase
+                .from('perfis')
+                .insert({
+                    id: data.user.id,
+                    nome: nome,
+                    tipo: tipo,
+                    pontos: 0
+                })
+
+            if (perfilError) throw perfilError
         }
+
+        if (tipo === 'funcionario') {
+            navigate('/funcionario/home')
+        } else {
+            navigate('/home')
+        }
+
+    } catch (err) {
+        console.error(err)
+        setErro(err.message || 'Erro ao cadastrar')
+    } finally {
+        setCarregando(false)
     }
+}
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-900 to-purple-700 flex flex-col items-center justify-center px-6 py-8">

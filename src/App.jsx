@@ -4,8 +4,9 @@ import Home from "./pages/Home"
 import Camera from "./pages/Camera"
 import Mapa from "./pages/Mapa"
 import Cadastro from "./pages/Cadastro"
-import CriarChamado from "./pages/CriarChamado"
-import TelaFuncionario from "./pages/TelaFuncionario"
+import FuncionarioHome from "./pages/FuncionarioHome"
+import FuncionarioChamados from "./pages/FuncionarioChamados"
+import Chamados from "./pages/Chamados"
 import RotaPrivada from "./components/RotaPrivada"
 import MobileFrame from './components/MobileFrame'
 
@@ -23,17 +24,37 @@ function App() {
             <Home />
           </RotaPrivada>
         }/>
-        <Route path="/Camera" element={
+        <Route path="/camera" element={
           <RotaPrivada>
             <Camera />
           </RotaPrivada>
         }/>
-        <Route path="/Mapa" element={
+        <Route path="/mapa" element={
           <RotaPrivada>
             <Mapa />
           </RotaPrivada>
         }/>
+        <Route path="/funcionario/home" element={
+          <RotaPrivada>
+            <FuncionarioHome />
+          </RotaPrivada>
+        }/>
+
+        <Route path="/funcionario/chamados" element={
+          <RotaPrivada>
+            <FuncionarioChamados />
+          </RotaPrivada>
+        }/>
+
+        <Route path="/chamados" element={
+          <RotaPrivada>
+            <Chamados />
+          </RotaPrivada>
+        }/>
+
       </Routes>
+
+      
     </BrowserRouter>
   )
 }

@@ -24,8 +24,19 @@ function Login() {
 
             if (error) throw error
 
-            // Login bem-sucedido!
-            navigate('/home')
+            const { data: perfil, error: perfilError } = await supabase
+            .from("perfis")
+            .select("tipo")
+            .eq("id", data.user.id)
+            .single()
+
+            if (perfilError) throw perfilError
+
+            if (perfil?.tipo === "funcionario") {
+            navigate("/funcionario/home")
+            } else {
+            navigate("/home")
+            }
         } catch (err) {
             console.error(err)
             

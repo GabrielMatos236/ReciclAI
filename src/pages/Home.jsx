@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut } from 'lucide-react'
+import { User, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, AlertTriangle } from 'lucide-react'
 import BarraNavegacao from '../components/BarraNavegacao'
 import { supabase } from '../services/supabase'
 import Text from '../assets/Text.png'
@@ -98,7 +98,7 @@ function Home() {
       </div>
       
       {/* Botões de atalho */}
-      <div className="px-6 mt-6 grid grid-cols-3 gap-3">
+      <div className="px-6 mt-6 grid grid-cols-2 gap-3">
         <button className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
           <Recycle size={28} className="text-purple-900" />
           <span className="text-purple-900 text-xs font-semibold text-center">Aprenda a Reciclar</span>
@@ -112,6 +112,11 @@ function Home() {
         <button className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
           <Trophy size={28} className="text-purple-900" />
           <span className="text-purple-900 text-xs font-semibold text-center">Recompensas</span>
+        </button>
+
+        <button onClick={() => navigate("/chamados")} className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
+          <AlertTriangle size={28} className="text-purple-900" />
+          <span className="text-purple-900 text-xs font-semibold text-center">Solicitar Manutenção</span>
         </button>
       </div>
       
@@ -132,7 +137,6 @@ function Home() {
           </div>
         </button>
       </div>
-      
       <BarraNavegacao />
     </div>
   )
