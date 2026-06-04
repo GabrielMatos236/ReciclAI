@@ -142,7 +142,7 @@ function Camera() {
 
                                 {/* Botão primário — Ver no Mapa */}
                                 <button
-                                    onClick={() => navigate('/mapa')}
+                                    onClick={() => navigate('/mapa', { state: { filtroTipo: resultado.tipoResiduo } })}
                                     className="w-full bg-blue-900 text-white py-3 rounded-2xl font-bold cursor-pointer hover:bg-blue-800 transition text-sm mb-2"
                                 >
                                     Ver Lixeira no Mapa

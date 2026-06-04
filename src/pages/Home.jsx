@@ -113,7 +113,10 @@ function Home() {
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Aprenda a Reciclar</span>
         </button>
 
-        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+        <button
+          onClick={() => navigate('/mapa')}
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
+        >
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <MapPin size={24} className="text-black" />
           </div>
