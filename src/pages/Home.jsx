@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, AlertTriangle } from 'lucide-react'
+import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2 } from 'lucide-react'
 import BarraNavegacao from '../components/BarraNavegacao'
 import { supabase } from '../services/supabase'
 import Text from '../assets/Text.png'
@@ -12,7 +12,6 @@ function Home() {
 
   useEffect(() => {
     async function carregarPerfil() {
-      // Pega o usuário autenticado
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
@@ -20,7 +19,6 @@ function Home() {
         return
       }
 
-      // Busca o perfil dele na tabela 'perfis'
       const { data, error } = await supabase
         .from('perfis')
         .select('*')
@@ -47,96 +45,101 @@ function Home() {
   if (carregando) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-purple-900 font-semibold">Carregando...</p>
+        <p className="text-blue-900 font-semibold">Carregando...</p>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
-      
-      {/* Header roxo */}
-      <div className="bg-purple-900 px-6 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex justify-between items-center mb-6">
-          <img src={Text} alt="ReciclAI" className="h-8" />
-          <button 
+
+      {/* Header com gradiente AZUL diagonal, borda inferior reta */}
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
+        <div className="flex justify-between items-center mb-8">
+          <img src={Text} alt="ReciclAI" className="h-10" />
+          <button
             onClick={handleLogout}
-            className="bg-purple-700 p-2 rounded-full cursor-pointer hover:bg-purple-600 transition"
+            className="bg-blue-800 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
             title="Sair"
           >
-            <LogOut size={24} className="text-white" />
+            <LogOut size={22} className="text-white" />
           </button>
         </div>
-        
-        <h2 className="text-white text-2xl font-bold">
-          Olá, {perfil?.nome || 'Usuário'}!
+
+        <h2 className="text-white text-lg font-semibold ml-4">
+          olá, {perfil?.nome || 'Usuário'}!
         </h2>
       </div>
-      
-      {/* Card de pontos */}
-      <div className="px-6 -mt-4">
-        <div className="bg-green-300 rounded-3xl p-6 shadow-lg">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-purple-900 text-xl font-bold">Seus Pontos</h3>
-            <button className="bg-purple-900 text-white text-sm px-4 py-1 rounded-full cursor-pointer flex items-center gap-1">
-              Histórico <Trophy size={14} />
-            </button>
+
+      {/* Card grande do meio — chamados + pontos */}
+      <div className="px-6 -mt-14">
+        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <CheckCircle2 size={30} className="text-blue-900" strokeWidth={2.5} />
+            <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
-          
           <div className="flex justify-around items-center">
             <div className="text-center">
-              <p className="text-purple-900 text-sm">Reciclados</p>
-              <p className="text-purple-900 text-3xl font-bold">0</p>
+              <p className="text-blue-900 text-xs">Chamados</p>
+              <p className="text-blue-900 text-2xl font-bold">0</p>
             </div>
-            <div className="w-px h-12 bg-purple-900 opacity-30"></div>
+            <div className="w-px h-9 bg-blue-900 opacity-30"></div>
             <div className="text-center">
-              <p className="text-purple-900 text-sm">Pontos</p>
-              <p className="text-purple-900 text-3xl font-bold">{perfil?.pontos || 0}</p>
+              <p className="text-blue-900 text-xs">Pontos</p>
+              <p className="text-blue-900 text-2xl font-bold">{perfil?.pontos || 0}</p>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Botões de atalho */}
-      <div className="px-6 mt-6 grid grid-cols-2 gap-3">
-        <button className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
-          <Recycle size={28} className="text-purple-900" />
-          <span className="text-purple-900 text-xs font-semibold text-center">Aprenda a Reciclar</span>
-        </button>
-        
-        <button className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
-          <MapPin size={28} className="text-purple-900" />
-          <span className="text-purple-900 text-xs font-semibold text-center">Pontos de Coleta</span>
-        </button>
-        
-        <button className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
-          <Trophy size={28} className="text-purple-900" />
-          <span className="text-purple-900 text-xs font-semibold text-center">Recompensas</span>
+
+      {/* 4 quadradinhos em linha, mais espaçados e menores */}
+      <div className="px-6 mt-5 flex justify-between gap-3">
+
+        {/* TODO: criar rota /chamados depois */}
+        <button
+          onClick={() => navigate("/chamados")}
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
+        >
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <Trash2 size={24} className="text-black" />
+          </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
         </button>
 
-        <button onClick={() => navigate("/chamados")} className="bg-green-300 rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:bg-green-400 transition">
-          <AlertTriangle size={28} className="text-purple-900" />
-          <span className="text-purple-900 text-xs font-semibold text-center">Solicitar Manutenção</span>
-        </button>
-      </div>
-      
-      {/* Card grande "Analisar descarte" */}
-      <div className="px-6 mt-6">
-        <button 
-          onClick={() => navigate('/camera')}
-          className="w-full bg-gradient-to-br from-green-400 to-green-600 rounded-3xl p-6 cursor-pointer hover:shadow-xl transition text-left"
-        >
-          <div className="flex items-center gap-4">
-            <div className="bg-white rounded-2xl p-4">
-              <CameraIcon size={40} className="text-green-600" />
-            </div>
-            <div>
-              <h3 className="text-white text-xl font-bold">Analisar Descarte</h3>
-              <p className="text-green-100 text-sm">Use a câmera e descubra a lixeira certa</p>
-            </div>
+        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <Recycle size={24} className="text-black" />
           </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Aprenda a Reciclar</span>
+        </button>
+
+        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <MapPin size={24} className="text-black" />
+          </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos de Descarte</span>
+        </button>
+
+        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
+            <Trophy size={24} className="text-black" />
+          </div>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Recompensas</span>
+        </button>
+
+      </div>
+
+      {/* Card "SCAN IT" — branco com borda */}
+      <div className="px-6 mt-5">
+        <button
+          onClick={() => navigate('/camera')}
+          className="w-full bg-white border-2 border-gray-300 rounded-3xl py-8 cursor-pointer hover:border-blue-700 transition flex flex-col items-center gap-2"
+        >
+          <CameraIcon size={36} className="text-black" strokeWidth={1.5} />
+          <span className="text-black text-base font-bold tracking-wide">ESCANEAR DESCARTE</span>
         </button>
       </div>
+
       <BarraNavegacao />
     </div>
   )
