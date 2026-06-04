@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Camera as CameraIcon, X, Loader2, Trash2, Sparkles } from 'lucide-react'
 import BarraNavegacao from "../components/BarraNavegacao"
 import { analisarImagem } from "../services/claudeAPI"
+import logo from "../assets/Text.png"
 
 function Camera() {
     const [imagem, setImagem] = useState(null)
@@ -56,12 +57,12 @@ function Camera() {
 
     // Cor da lixeira (mantido pra usar nos cards de resultado)
     const coresLixeira = {
-        'Azul':     'bg-blue-500',
+        'Azul': 'bg-blue-500',
         'Vermelha': 'bg-red-500',
-        'Verde':    'bg-green-500',
-        'Amarela':  'bg-yellow-500',
-        'Marrom':   'bg-amber-800',
-        'Cinza':    'bg-gray-500'
+        'Verde': 'bg-green-500',
+        'Amarela': 'bg-yellow-500',
+        'Marrom': 'bg-amber-800',
+        'Cinza': 'bg-gray-500'
     }
 
     // === ESTADO 3: RESULTADO (foto de fundo + cards sobrepostos) ===
@@ -199,28 +200,51 @@ function Camera() {
 
     // === ESTADO 1: INICIAL (área pontilhada gigante) ===
     return (
-        <div className="min-h-screen bg-gray-100 pb-24 flex flex-col">
+        <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
 
-            {/* Header com gradiente AZUL diagonal */}
-            <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-8 pt-12 pb-6">
-                <h1 className="text-white text-2xl font-bold">Analisar Descarte</h1>
-                <p className="text-blue-100 text-sm mt-1">Tire uma foto ou envie da galeria</p>
+            {/* Header */}
+            <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center">
+
+                <h1 className="text-white text-2xl font-bold tracking-wide">
+                    Escanear Descarte
+                </h1>
+
+                <div className="mt-2 flex items-center gap-2 opacity-80">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-blue-200">
+                        Powered by
+                    </span>
+
+                    <img
+                        src={logo}
+                        alt="ReciclAI"
+                        className="h-4 object-contain"
+                    />
+                </div>
+
             </div>
 
-            {/* Área grande pontilhada — ocupa todo o espaço restante */}
-            <div className="flex-1 px-6 py-6">
+            {/* Área que ocupa TODO o restante da tela */}
+            <div className="flex-1 px-4 pt-4 pb-32">
                 <label className="block h-full">
-                    <div className="h-full bg-white border-2 border-dashed border-blue-700 rounded-3xl flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-blue-50 transition">
-                        <div className="bg-blue-100 rounded-full p-6">
-                            <CameraIcon size={56} className="text-blue-700" />
+                    <div className="h-full border-2 border-dashed border-blue-700 rounded-3xl bg-white flex flex-col items-center justify-center text-center cursor-pointer hover:bg-blue-50 transition">
+
+                        <div className="bg-blue-100 rounded-full p-6 mb-4">
+                            <CameraIcon
+                                size={56}
+                                className="text-blue-700"
+                            />
                         </div>
-                        <p className="text-blue-900 font-bold text-xl text-center px-6">
+
+                        <p className="text-blue-900 font-bold text-xl">
                             Toque para tirar foto
                         </p>
-                        <p className="text-gray-500 text-sm text-center px-6">
+
+                        <p className="text-gray-500 text-sm mt-2">
                             ou enviar uma imagem da galeria
                         </p>
+
                     </div>
+
                     <input
                         type="file"
                         accept="image/*"
