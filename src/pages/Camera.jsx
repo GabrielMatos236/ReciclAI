@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Camera as CameraIcon, X, Loader2, Trash2 } from 'lucide-react'
+import { Camera as CameraIcon, X, Loader2, Trash2, Sparkles } from 'lucide-react'
 import BarraNavegacao from "../components/BarraNavegacao"
 import { analisarImagem } from "../services/claudeAPI"
 
@@ -15,14 +15,12 @@ function Camera() {
         const arquivo = evento.target.files[0]
         if (!arquivo) return
 
-        // Salvar preview
         const url = URL.createObjectURL(arquivo)
         setImagem(url)
         setMediaType(arquivo.type)
         setResultado(null)
         setErro(null)
 
-        // Converter pra base64
         const reader = new FileReader()
         reader.onloadend = () => {
             const base64 = reader.result.split(',')[1]
@@ -56,143 +54,183 @@ function Camera() {
         }
     }
 
-    // Mapeamento das cores das lixeiras
+    // Cor da lixeira (mantido pra usar nos cards de resultado)
     const coresLixeira = {
-        'Azul': 'bg-blue-500',
+        'Azul':     'bg-blue-500',
         'Vermelha': 'bg-red-500',
-        'Verde': 'bg-green-500',
-        'Amarela': 'bg-yellow-500',
-        'Marrom': 'bg-amber-800',
-        'Cinza': 'bg-gray-500'
+        'Verde':    'bg-green-500',
+        'Amarela':  'bg-yellow-500',
+        'Marrom':   'bg-amber-800',
+        'Cinza':    'bg-gray-500'
     }
 
-    return (
-        <div className="min-h-screen bg-gray-100 pb-24">
-            {/* Header */}
-            <div className="bg-purple-900 px-6 pt-12 pb-6 rounded-b-3xl">
-                <h1 className="text-white text-2xl font-bold">Analisar Descarte</h1>
-                <p className="text-purple-200 text-sm mt-1">
-                    Tire uma foto ou envie da galeria
-                </p>
+    // === ESTADO 3: RESULTADO (foto de fundo + cards sobrepostos) ===
+    if (resultado && imagem) {
+        return (
+            <div className="min-h-screen pb-24 relative">
+
+                {/* Foto como background fixo, com filtro escuro por cima */}
+                <div
+                    className="fixed inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${imagem})` }}
+                />
+                <div className="fixed inset-0 bg-black/60" />
+
+                {/* Conteúdo scrollável por cima da foto */}
+                <div className="relative z-10">
+
+                    {/* Header com gradiente AZUL */}
+                    <div className="bg-gradient-to-tr from-blue-950/90 to-blue-700/90 backdrop-blur-sm px-8 pt-12 pb-6 flex justify-between items-center">
+                        <div>
+                            <h1 className="text-white text-2xl font-bold">Resultado</h1>
+                            <p className="text-blue-100 text-sm mt-1">Análise da IA concluída</p>
+                        </div>
+                        <button
+                            onClick={limparImagem}
+                            className="bg-blue-800/80 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
+                        >
+                            <X size={22} className="text-white" />
+                        </button>
+                    </div>
+
+                    {/* Cards de informação — efeito vidro fosco */}
+                    <div className="px-6 mt-6 flex flex-col gap-4">
+
+                        {/* Tipo de resíduo */}
+                        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-xl">
+                            <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Tipo de resíduo</p>
+                            <p className="text-2xl font-bold text-blue-900">{resultado.tipoResiduo}</p>
+                        </div>
+
+                        {/* Lixeira correta */}
+                        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-xl">
+                            <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Lixeira correta</p>
+                            <div className={`${coresLixeira[resultado.lixeira] || 'bg-gray-500'} text-white px-4 py-3 rounded-2xl font-bold text-lg flex items-center gap-2`}>
+                                <Trash2 size={20} />
+                                Lixeira {resultado.lixeira}
+                            </div>
+                        </div>
+
+                        {/* Explicação */}
+                        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-xl">
+                            <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Por quê?</p>
+                            <p className="text-gray-800 leading-relaxed">{resultado.explicacao}</p>
+                        </div>
+
+                        {/* Dica */}
+                        <div className="bg-blue-900/95 backdrop-blur-md rounded-3xl p-5 shadow-xl">
+                            <div className="flex items-start gap-3">
+                                <Sparkles size={20} className="text-blue-200 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="text-blue-200 text-xs uppercase tracking-wider mb-1">Dica</p>
+                                    <p className="text-white leading-relaxed">{resultado.dica}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Botão analisar outra */}
+                        <button
+                            onClick={limparImagem}
+                            className="w-full bg-white text-blue-900 py-4 rounded-2xl mt-2 font-bold cursor-pointer hover:bg-gray-100 transition shadow-xl"
+                        >
+                            Analisar Outra Imagem
+                        </button>
+
+                    </div>
+                </div>
+
+                <BarraNavegacao />
             </div>
+        )
+    }
 
-            {/* Conteúdo */}
-            <div className="px-6 mt-6">
-                {!imagem ? (
-                    <label className="block">
-                        <div className="bg-white border-2 border-dashed border-purple-400 rounded-3xl p-12 flex flex-col items-center gap-4 cursor-pointer hover:bg-purple-50 transition">
-                            <div className="bg-purple-100 rounded-full p-6">
-                                <CameraIcon size={48} className="text-purple-700" />
-                            </div>
-                            <p className="text-purple-900 font-semibold text-lg text-center">
-                                Toque para tirar foto
-                            </p>
-                            <p className="text-gray-500 text-sm text-center">
-                                ou enviar uma imagem da galeria
-                            </p>
-                        </div>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            onChange={handleImagemSelecionada}
-                            className="hidden"
-                        />
-                    </label>
-                ) : (
-                    <>
-                        {/* Imagem Capturada */}
-                        <div className="relative">
-                            <img
-                                src={imagem}
-                                alt="Imagem Capturada"
-                                className="w-full rounded-3xl shadow-lg"
-                            />
-                            <button
-                                onClick={limparImagem}
-                                className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-100 transition"
-                            >
-                                <X size={20} className="text-purple-900" />
-                            </button>
-                        </div>
+    // === ESTADO 2: FOTO TIRADA (aguardando análise) ===
+    if (imagem) {
+        return (
+            <div className="min-h-screen bg-black relative pb-24">
 
-                        {/* Botão de Analisar (só aparece se não tem resultado ainda) */}
-                        {!resultado && (
-                            <button
-                                onClick={analisar}
-                                disabled={analisando || !imagemBase64}
-                                className="w-full bg-purple-900 text-white py-4 rounded-2xl mt-4 font-semibold cursor-pointer hover:bg-purple-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
-                            >
-                                {analisando ? (
-                                    <>
-                                        <Loader2 size={20} className="animate-spin" />
-                                        Analisando...
-                                    </>
-                                ) : (
-                                    "Analisar com IA"
-                                )}
-                            </button>
+                {/* Foto fullscreen */}
+                <img
+                    src={imagem}
+                    alt="Foto capturada"
+                    className="fixed inset-0 w-full h-full object-cover"
+                />
+
+                {/* Botão X pra remover foto */}
+                <button
+                    onClick={limparImagem}
+                    className="fixed top-12 right-6 bg-black/60 backdrop-blur-md p-3 rounded-full cursor-pointer hover:bg-black/80 transition z-20"
+                >
+                    <X size={22} className="text-white" />
+                </button>
+
+                {/* Botão "Analisar com IA" sobreposto na parte de baixo */}
+                <div className="fixed bottom-28 left-0 right-0 px-6 z-20">
+                    <button
+                        onClick={analisar}
+                        disabled={analisando}
+                        className="w-full bg-blue-700/80 backdrop-blur-md text-white py-5 rounded-3xl font-bold text-lg cursor-pointer hover:bg-blue-700/95 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-2xl border border-white/20"
+                    >
+                        {analisando ? (
+                            <>
+                                <Loader2 size={22} className="animate-spin" />
+                                Analisando...
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles size={22} />
+                                Analisar com IA
+                            </>
                         )}
+                    </button>
+                </div>
 
-                        {/* Mensagem de erro */}
-                        {erro && (
-                            <div className="bg-red-100 border border-red-300 text-red-800 p-4 rounded-2xl mt-4">
-                                {erro}
-                            </div>
-                        )}
-
-                        {/* Resultado da análise */}
-                        {resultado && (
-                            <div className="bg-white rounded-3xl p-6 mt-4 shadow-lg">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <Trash2 size={24} className="text-purple-900" />
-                                    <h2 className="text-xl font-bold text-purple-900">
-                                        Resultado
-                                    </h2>
-                                </div>
-
-                                {/* Tipo de resíduo */}
-                                <div className="mb-4">
-                                    <p className="text-gray-500 text-sm">Tipo de resíduo</p>
-                                    <p className="text-2xl font-bold text-purple-900">
-                                        {resultado.tipoResiduo}
-                                    </p>
-                                </div>
-
-                                {/* Lixeira */}
-                                <div className="mb-4">
-                                    <p className="text-gray-500 text-sm mb-2">Lixeira correta</p>
-                                    <div className={`${coresLixeira[resultado.lixeira] || 'bg-gray-500'} text-white px-4 py-3 rounded-2xl font-bold text-lg flex items-center gap-2`}>
-                                        <Trash2 size={20} />
-                                        Lixeira {resultado.lixeira}
-                                    </div>
-                                </div>
-
-                                {/* Explicação */}
-                                <div className="mb-4">
-                                    <p className="text-gray-500 text-sm">Por quê?</p>
-                                    <p className="text-gray-800">{resultado.explicacao}</p>
-                                </div>
-
-                                {/* Dica */}
-                                <div className="bg-green-100 border-l-4 border-green-500 p-3 rounded-r-xl">
-                                    <p className="text-green-800 text-sm">
-                                        💡 <span className="font-semibold">Dica:</span> {resultado.dica}
-                                    </p>
-                                </div>
-
-                                {/* Botões de ação */}
-                                <button
-                                    onClick={limparImagem}
-                                    className="w-full bg-purple-900 text-white py-3 rounded-2xl mt-6 font-semibold cursor-pointer hover:bg-purple-800 transition"
-                                >
-                                    Analisar Outra Imagem
-                                </button>
-                            </div>
-                        )}
-                    </>
+                {/* Mensagem de erro flutuante */}
+                {erro && (
+                    <div className="fixed bottom-44 left-6 right-6 bg-red-500/90 backdrop-blur-md text-white p-4 rounded-2xl z-20">
+                        {erro}
+                    </div>
                 )}
+
+                <BarraNavegacao />
             </div>
+        )
+    }
+
+    // === ESTADO 1: INICIAL (área pontilhada gigante) ===
+    return (
+        <div className="min-h-screen bg-gray-100 pb-24 flex flex-col">
+
+            {/* Header com gradiente AZUL diagonal */}
+            <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-8 pt-12 pb-6">
+                <h1 className="text-white text-2xl font-bold">Analisar Descarte</h1>
+                <p className="text-blue-100 text-sm mt-1">Tire uma foto ou envie da galeria</p>
+            </div>
+
+            {/* Área grande pontilhada — ocupa todo o espaço restante */}
+            <div className="flex-1 px-6 py-6">
+                <label className="block h-full">
+                    <div className="h-full bg-white border-2 border-dashed border-blue-700 rounded-3xl flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-blue-50 transition">
+                        <div className="bg-blue-100 rounded-full p-6">
+                            <CameraIcon size={56} className="text-blue-700" />
+                        </div>
+                        <p className="text-blue-900 font-bold text-xl text-center px-6">
+                            Toque para tirar foto
+                        </p>
+                        <p className="text-gray-500 text-sm text-center px-6">
+                            ou enviar uma imagem da galeria
+                        </p>
+                    </div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={handleImagemSelecionada}
+                        className="hidden"
+                    />
+                </label>
+            </div>
+
             <BarraNavegacao />
         </div>
     )
