@@ -74,7 +74,7 @@ function Camera() {
                 <span className="text-[10px] uppercase tracking-[0.2em] text-blue-200">
                     Powered by
                 </span>
-                <img src={logo} alt="ReciclAI" className="h-4 object-contain" />
+                <img src={logo} alt="ReciclAI" className="h-5 w-auto object-contain" />
             </div>
         </div>
     )
