@@ -59,7 +59,7 @@ function criarIcone(cor) {
   })
 }
 
-function Mapa() {
+function Mapa({ barra = <BarraNavegacao /> }) {
   const location = useLocation()
 
   const [filtroPredio, setFiltroPredio] = useState(null)
@@ -220,7 +220,7 @@ function Mapa() {
         )}
       </div>
 
-      <BarraNavegacao />
+      {barra}
     </div>
   )
 }

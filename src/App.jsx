@@ -9,6 +9,7 @@ import FuncionarioChamados from "./pages/FuncionarioChamados"
 import Chamados from "./pages/Chamados"
 import RotaPrivada from "./components/RotaPrivada"
 import MobileFrame from './components/MobileFrame'
+import FuncionarioMapa from "./pages/FuncionarioMapa"
 
 function App() {
   return (
@@ -43,6 +44,12 @@ function App() {
         <Route path="/funcionario/chamados" element={
           <RotaPrivada>
             <FuncionarioChamados />
+          </RotaPrivada>
+        }/>
+
+        <Route path="/funcionario/mapa" element={
+          <RotaPrivada>
+            <FuncionarioMapa />
           </RotaPrivada>
         }/>
 
