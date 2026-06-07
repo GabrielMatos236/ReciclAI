@@ -8,33 +8,26 @@ import Text from '../assets/Text.png'
 function Home() {
   const navigate = useNavigate()
   const [perfil, setPerfil] = useState(null)
+  const [totalChamados, setTotalChamados] = useState(0)
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
-    async function carregarPerfil() {
+    async function carregarDados() {
       const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setCarregando(false); return }
 
-      if (!user) {
-        setCarregando(false)
-        return
-      }
+      // Busca perfil e chamados em paralelo
+      const [{ data: perfilData }, { count }] = await Promise.all([
+        supabase.from('perfis').select('*').eq('id', user.id).single(),
+        supabase.from('chamados').select('*', { count: 'exact', head: true }).eq('usuario_id', user.id)
+      ])
 
-      const { data, error } = await supabase
-        .from('perfis')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      if (error) {
-        console.error('Erro ao carregar perfil:', error)
-      } else {
-        setPerfil(data)
-      }
-
+      if (perfilData) setPerfil(perfilData)
+      setTotalChamados(count || 0)
       setCarregando(false)
     }
 
-    carregarPerfil()
+    carregarDados()
   }, [])
 
   async function handleLogout() {
@@ -65,13 +58,12 @@ function Home() {
             <LogOut size={22} className="text-white" />
           </button>
         </div>
-
         <h2 className="text-white text-lg font-semibold ml-4">
           olá, {perfil?.nome || 'Usuário'}!
         </h2>
       </div>
 
-      {/* Card */}
+      {/* Card de stats */}
       <div className="px-6 -mt-14">
         <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
@@ -81,7 +73,7 @@ function Home() {
           <div className="flex justify-around items-center">
             <div className="text-center">
               <p className="text-blue-900 text-xs">Chamados</p>
-              <p className="text-blue-900 text-2xl font-bold">0</p>
+              <p className="text-blue-900 text-2xl font-bold">{totalChamados}</p>
             </div>
             <div className="w-px h-9 bg-blue-900 opacity-30"></div>
             <div className="text-center">
@@ -92,12 +84,10 @@ function Home() {
         </div>
       </div>
 
-      {/* Botões Funcionalidades */}
+      {/* Botões de funcionalidades */}
       <div className="px-6 mt-5 flex justify-between gap-3">
-
-        {/* TODO: criar rota /chamados depois */}
         <button
-          onClick={() => navigate("/chamados")}
+          onClick={() => navigate('/chamados')}
           className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
         >
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
@@ -106,7 +96,10 @@ function Home() {
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
         </button>
 
-        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+        <button
+          onClick={() => navigate('/aprenda')}
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
+        >
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Recycle size={24} className="text-black" />
           </div>
@@ -123,13 +116,15 @@ function Home() {
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos de Descarte</span>
         </button>
 
-        <button className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
+        <button
+          onClick={() => navigate('/recompensas')}
+          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
+        >
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Trophy size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Recompensas</span>
         </button>
-
       </div>
 
       {/* Card SCAN IT */}
