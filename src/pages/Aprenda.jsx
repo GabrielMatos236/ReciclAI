@@ -322,6 +322,8 @@ function Aprenda() {
         })}
 
       </div>
+
+      <BarraNavegacao />
     </div>
   )
 }
