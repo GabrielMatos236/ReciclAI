@@ -1,37 +1,33 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2, User, ChevronDown } from 'lucide-react'
 import BarraNavegacao from '../components/BarraNavegacao'
 import { Avatar } from '../components/Avatar'
+import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
 import Text from '../assets/Text.png'
+import { useRef } from 'react'
 
 function Home() {
   const navigate = useNavigate()
-  const [perfil, setPerfil] = useState(null)
+  const { perfil } = usePerfil()
   const [totalChamados, setTotalChamados] = useState(0)
-  const [carregando, setCarregando] = useState(true)
   const [dropdownAberto, setDropdownAberto] = useState(false)
   const dropdownRef = useRef(null)
 
   useEffect(() => {
-    async function carregarDados() {
+    async function carregarChamados() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setCarregando(false); return }
-
-      const [{ data: perfilData }, { count }] = await Promise.all([
-        supabase.from('perfis').select('*').eq('id', user.id).single(),
-        supabase.from('chamados').select('*', { count: 'exact', head: true }).eq('usuario_id', user.id)
-      ])
-
-      if (perfilData) setPerfil(perfilData)
+      if (!user) return
+      const { count } = await supabase
+        .from('chamados')
+        .select('*', { count: 'exact', head: true })
+        .eq('usuario_id', user.id)
       setTotalChamados(count || 0)
-      setCarregando(false)
     }
-    carregarDados()
+    carregarChamados()
   }, [])
 
-  // Fecha dropdown ao clicar fora
   useEffect(() => {
     function handleClickFora(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -45,14 +41,6 @@ function Home() {
   async function handleLogout() {
     await supabase.auth.signOut()
     navigate('/')
-  }
-
-  if (carregando) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-blue-900 font-semibold">Carregando...</p>
-      </div>
-    )
   }
 
   return (
@@ -77,7 +65,6 @@ function Home() {
               />
             </button>
 
-            {/* Dropdown menu */}
             {dropdownAberto && (
               <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[160px] border border-gray-100">
                 <button
@@ -126,7 +113,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Botões de funcionalidades */}
+      {/* Botões */}
       <div className="px-6 mt-5 flex justify-between gap-3">
         <button onClick={() => navigate('/chamados')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
@@ -134,21 +121,18 @@ function Home() {
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
         </button>
-
         <button onClick={() => navigate('/aprenda')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Recycle size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Aprenda a Reciclar</span>
         </button>
-
         <button onClick={() => navigate('/mapa')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <MapPin size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos de Descarte</span>
         </button>
-
         <button onClick={() => navigate('/recompensas')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Trophy size={24} className="text-black" />

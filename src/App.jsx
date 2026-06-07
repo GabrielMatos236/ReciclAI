@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { AuthProvider } from "./contexts/AuthContext"
 import Login from "./pages/Login"
 import Home from "./pages/Home"
 import Camera from "./pages/Camera"
@@ -14,20 +15,22 @@ import RotaPrivada from "./components/RotaPrivada"
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/cadastro" element={<Login />} />
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/cadastro" element={<Login />} />
 
-        <Route path="/home" element={<RotaPrivada><Home /></RotaPrivada>} />
-        <Route path="/camera" element={<RotaPrivada><Camera /></RotaPrivada>} />
-        <Route path="/mapa" element={<RotaPrivada><Mapa /></RotaPrivada>} />
-        <Route path="/chamados" element={<RotaPrivada><Chamados /></RotaPrivada>} />
-        <Route path="/aprenda" element={<RotaPrivada><Aprenda /></RotaPrivada>} />
-        <Route path="/recompensas" element={<RotaPrivada><Recompensas /></RotaPrivada>} />
-        <Route path="/perfil" element={<RotaPrivada><Perfil /></RotaPrivada>} />
-        <Route path="/funcionario/home" element={<RotaPrivada><FuncionarioHome /></RotaPrivada>} />
-        <Route path="/funcionario/chamados" element={<RotaPrivada><FuncionarioChamados /></RotaPrivada>} />
-      </Routes>
+          <Route path="/home" element={<RotaPrivada><Home /></RotaPrivada>} />
+          <Route path="/camera" element={<RotaPrivada><Camera /></RotaPrivada>} />
+          <Route path="/mapa" element={<RotaPrivada><Mapa /></RotaPrivada>} />
+          <Route path="/chamados" element={<RotaPrivada><Chamados /></RotaPrivada>} />
+          <Route path="/aprenda" element={<RotaPrivada><Aprenda /></RotaPrivada>} />
+          <Route path="/recompensas" element={<RotaPrivada><Recompensas /></RotaPrivada>} />
+          <Route path="/perfil" element={<RotaPrivada><Perfil /></RotaPrivada>} />
+          <Route path="/funcionario/home" element={<RotaPrivada><FuncionarioHome /></RotaPrivada>} />
+          <Route path="/funcionario/chamados" element={<RotaPrivada><FuncionarioChamados /></RotaPrivada>} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, Calendar, LogOut, Edit2, Check, X, Shield, Lock, Eye, EyeOff } from 'lucide-react'
 import BarraNavegacao from '../components/BarraNavegacao'
 import { Avatar } from '../components/Avatar'
+import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
 
 function Perfil() {
     const navigate = useNavigate()
+    const { perfil: perfilCtx, atualizarPerfil } = usePerfil()
     const [perfil, setPerfil] = useState(null)
     const [email, setEmail] = useState('')
     const [carregando, setCarregando] = useState(true)
@@ -53,7 +55,12 @@ function Perfil() {
         setSalvando(true)
         const { error } = await supabase.from('perfis').update({ nome: novoNome.trim() }).eq('id', perfil.id)
         if (error) mostrarFeedback('erro', 'Erro ao salvar nome.')
-        else { setPerfil(p => ({ ...p, nome: novoNome.trim() })); mostrarFeedback('sucesso', 'Nome atualizado!') }
+        else {
+            const nomeAtualizado = novoNome.trim()
+            setPerfil(p => ({ ...p, nome: nomeAtualizado }))
+            atualizarPerfil({ nome: nomeAtualizado })  // atualiza Home e outros instantaneamente
+            mostrarFeedback('sucesso', 'Nome atualizado!')
+        }
         setSalvando(false)
         setEditandoNome(false)
     }
