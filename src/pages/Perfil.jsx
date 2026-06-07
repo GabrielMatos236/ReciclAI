@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, Calendar, LogOut, Edit2, Check, X, Shield, Lock, Eye, EyeOff } from 'lucide-react'
-import BarraNavegacao from '../components/BarraNavegacao'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'

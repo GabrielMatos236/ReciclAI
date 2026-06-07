@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronUp, ArrowLeft, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
-import BarraNavegacao from '../components/BarraNavegacao'
 
 const CATEGORIAS = [
   {
@@ -323,7 +322,6 @@ function Aprenda() {
 
       </div>
 
-      <BarraNavegacao />
     </div>
   )
 }

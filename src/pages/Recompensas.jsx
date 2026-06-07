@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Trophy, Medal, Star } from 'lucide-react'
-import BarraNavegacao from '../components/BarraNavegacao'
 import { supabase } from '../services/supabase'
 
 function Recompensas() {
@@ -194,7 +193,6 @@ function Recompensas() {
         </div>
       )}
 
-      <BarraNavegacao />
     </div>
   )
 }

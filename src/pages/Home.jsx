@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2, User, ChevronDown } from 'lucide-react'
-import BarraNavegacao from '../components/BarraNavegacao'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
@@ -152,7 +151,6 @@ function Home() {
         </button>
       </div>
 
-      <BarraNavegacao />
     </div>
   )
 }

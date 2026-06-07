@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import { Icon } from 'leaflet'
 import { ChevronUp, ChevronDown, X } from 'lucide-react'
-import BarraNavegacao from '../components/BarraNavegacao'
 import { supabase } from '../services/supabase'
 
 const CONFIG_CORES = {
@@ -212,7 +211,6 @@ function Mapa() {
         )}
       </div>
 
-      <BarraNavegacao />
     </div>
   )
 }

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react"
 import { X, Loader2, Trash2, Sparkles, ZapOff, Maximize2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { analisarImagem } from "../services/claudeAPI"
-import BarraNavegacao from "../components/BarraNavegacao"
 import logo from "../assets/Text.png"
 
 function Camera() {
@@ -167,9 +166,7 @@ function Camera() {
                             </div>
                         </div>
                     </div>
-                </div>
-                <BarraNavegacao />
-            </div>
+                </div>            </div>
         )
     }
 
@@ -203,9 +200,7 @@ function Camera() {
                             {erro}
                         </div>
                     )}
-                </div>
-                <BarraNavegacao />
-            </div>
+                </div>            </div>
         )
     }
 
@@ -291,7 +286,6 @@ function Camera() {
                 </div>
             )}
 
-            <BarraNavegacao />
         </div>
     )
 }
