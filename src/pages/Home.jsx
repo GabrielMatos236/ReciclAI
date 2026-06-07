@@ -94,9 +94,9 @@ function Home() {
 
       {/* Card de stats */}
       <div className="px-6 -mt-14">
-        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+        <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-5 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
-            <CheckCircle2 size={30} className="text-blue-900" strokeWidth={2.5} />
+            <CheckCircle2 size={30} className="text-[#015929]" strokeWidth={2.5} />
             <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
           <div className="flex justify-around items-center">
@@ -116,28 +116,28 @@ function Home() {
       {/* Botões */}
       <div className="px-6 mt-5 flex justify-between gap-3">
         <button onClick={() => navigate('/chamados')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <Trash2 size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <Trash2 size={24} className="text-[#015929]" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
         </button>
         <button onClick={() => navigate('/aprenda')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <Recycle size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <Recycle size={24} className="text-[#015929]" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Aprenda a Reciclar</span>
         </button>
         <button onClick={() => navigate('/mapa')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <MapPin size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <MapPin size={24} className="text-[#015929]" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos de Descarte</span>
         </button>
         <button onClick={() => navigate('/recompensas')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <Trophy size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <Trophy size={24} className="text-[#015929]" />
           </div>
-          <span className="text-black text-[10px] font-semibold text-center leading-tight">Recompensas</span>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos e Prêmios</span>
         </button>
       </div>
 
@@ -147,7 +147,7 @@ function Home() {
           onClick={() => navigate('/camera')}
           className="w-full bg-white border-2 border-gray-300 rounded-3xl py-8 cursor-pointer hover:border-blue-700 transition flex flex-col items-center gap-2"
         >
-          <CameraIcon size={36} className="text-black" strokeWidth={1.5} />
+          <CameraIcon size={36} className="text-blue-900" strokeWidth={1.5} />
           <span className="text-black text-base font-bold tracking-wide">ESCANEAR DESCARTE</span>
         </button>
       </div>

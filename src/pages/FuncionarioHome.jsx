@@ -86,7 +86,7 @@ function FuncionarioHome() {
       </div>
 
       <div className="px-6 -mt-4">
-        <div className="bg-green-300 rounded-3xl p-6 shadow-lg">
+        <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-6 shadow-lg">
           <h3 className="text-purple-900 text-xl font-bold mb-4">
             Resumo dos Chamados
           </h3>
@@ -94,7 +94,7 @@ function FuncionarioHome() {
           <div className="flex justify-around items-center">
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <Clock size={24} className="text-purple-900" />
+                <Clock size={24} className="text-[#015929]" />
               </div>
               <p className="text-purple-900 text-sm">Pendentes</p>
               <p className="text-purple-900 text-3xl font-bold">{pendentes}</p>
@@ -104,7 +104,7 @@ function FuncionarioHome() {
 
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <CheckCircle size={24} className="text-purple-900" />
+                <CheckCircle size={24} className="text-[#015929]" />
               </div>
               <p className="text-purple-900 text-sm">Encerrados</p>
               <p className="text-purple-900 text-3xl font-bold">{encerrados}</p>
@@ -119,8 +119,8 @@ function FuncionarioHome() {
           className="w-full bg-white rounded-3xl p-5 shadow-lg cursor-pointer hover:shadow-xl transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="bg-green-300 rounded-2xl p-4">
-              <ClipboardList size={36} className="text-purple-900" />
+            <div className="bg-[#4AE273] border-2 border-[#015929] rounded-2xl p-4">
+              <ClipboardList size={36} className="text-[#015929]" />
             </div>
 
             <div>
@@ -139,8 +139,8 @@ function FuncionarioHome() {
           className="w-full bg-white rounded-3xl p-5 shadow-lg cursor-pointer hover:shadow-xl transition text-left"
         >
           <div className="flex items-center gap-4">
-            <div className="bg-green-300 rounded-2xl p-4">
-              <MapPin size={36} className="text-purple-900" />
+            <div className="bg-[#4AE273] border-2 border-[#015929] rounded-2xl p-4">
+              <MapPin size={36} className="text-[#015929]" />
             </div>
 
             <div>
