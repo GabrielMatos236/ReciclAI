@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2 } from 'lucide-react'
+import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2, User, ChevronDown } from 'lucide-react'
 import BarraNavegacao from '../components/BarraNavegacao'
+import { Avatar } from '../components/Avatar'
 import { supabase } from '../services/supabase'
 import Text from '../assets/Text.png'
 
@@ -10,13 +11,14 @@ function Home() {
   const [perfil, setPerfil] = useState(null)
   const [totalChamados, setTotalChamados] = useState(0)
   const [carregando, setCarregando] = useState(true)
+  const [dropdownAberto, setDropdownAberto] = useState(false)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     async function carregarDados() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { setCarregando(false); return }
 
-      // Busca perfil e chamados em paralelo
       const [{ data: perfilData }, { count }] = await Promise.all([
         supabase.from('perfis').select('*').eq('id', user.id).single(),
         supabase.from('chamados').select('*', { count: 'exact', head: true }).eq('usuario_id', user.id)
@@ -26,8 +28,18 @@ function Home() {
       setTotalChamados(count || 0)
       setCarregando(false)
     }
-
     carregarDados()
+  }, [])
+
+  // Fecha dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickFora(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownAberto(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickFora)
+    return () => document.removeEventListener('mousedown', handleClickFora)
   }, [])
 
   async function handleLogout() {
@@ -50,16 +62,46 @@ function Home() {
       <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
         <div className="flex justify-between items-center mb-8">
           <img src={Text} alt="ReciclAI" className="h-10" />
-          <button
-            onClick={handleLogout}
-            className="bg-blue-800 p-2 rounded-full cursor-pointer hover:bg-blue-700 transition"
-            title="Sair"
-          >
-            <LogOut size={22} className="text-white" />
-          </button>
+
+          {/* Avatar + Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownAberto(p => !p)}
+              className="flex items-center gap-1.5 cursor-pointer"
+            >
+              <Avatar nome={perfil?.nome} avatarUrl={perfil?.avatar_url} tamanho={38} />
+              <ChevronDown
+                size={14}
+                className="text-white/70 transition-transform"
+                style={{ transform: dropdownAberto ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              />
+            </button>
+
+            {/* Dropdown menu */}
+            {dropdownAberto && (
+              <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-2xl overflow-hidden z-50 min-w-[160px] border border-gray-100">
+                <button
+                  onClick={() => { setDropdownAberto(false); navigate('/perfil') }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition cursor-pointer"
+                >
+                  <User size={16} className="text-blue-700" />
+                  <span className="text-blue-900 text-sm font-semibold">Meu Perfil</span>
+                </button>
+                <div className="h-px bg-gray-100" />
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition cursor-pointer"
+                >
+                  <LogOut size={16} className="text-red-500" />
+                  <span className="text-red-500 text-sm font-semibold">Sair</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
         <h2 className="text-white text-lg font-semibold ml-4">
-          olá, {perfil?.nome || 'Usuário'}!
+          olá, {perfil?.nome?.split(' ')[0] || 'Usuário'}!
         </h2>
       </div>
 
@@ -86,40 +128,28 @@ function Home() {
 
       {/* Botões de funcionalidades */}
       <div className="px-6 mt-5 flex justify-between gap-3">
-        <button
-          onClick={() => navigate('/chamados')}
-          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
-        >
+        <button onClick={() => navigate('/chamados')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Trash2 size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
         </button>
 
-        <button
-          onClick={() => navigate('/aprenda')}
-          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
-        >
+        <button onClick={() => navigate('/aprenda')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Recycle size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Aprenda a Reciclar</span>
         </button>
 
-        <button
-          onClick={() => navigate('/mapa')}
-          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
-        >
+        <button onClick={() => navigate('/mapa')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <MapPin size={24} className="text-black" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">Pontos de Descarte</span>
         </button>
 
-        <button
-          onClick={() => navigate('/recompensas')}
-          className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
-        >
+        <button onClick={() => navigate('/recompensas')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
             <Trophy size={24} className="text-black" />
           </div>
