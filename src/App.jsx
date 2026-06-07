@@ -3,7 +3,6 @@ import Login from "./pages/Login"
 import Home from "./pages/Home"
 import Camera from "./pages/Camera"
 import Mapa from "./pages/Mapa"
-import Cadastro from "./pages/Cadastro"
 import FuncionarioHome from "./pages/FuncionarioHome"
 import FuncionarioChamados from "./pages/FuncionarioChamados"
 import Chamados from "./pages/Chamados"
@@ -17,7 +16,7 @@ function App() {
       <Routes>
         {/* Rotas Públicas */}
         <Route path="/" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/cadastro" element={<Login />} />
 
         {/* Rotas Privadas */}
         <Route path="/home" element={<RotaPrivada><Home /></RotaPrivada>} />
