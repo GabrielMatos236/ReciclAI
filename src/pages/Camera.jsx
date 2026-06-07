@@ -1,36 +1,30 @@
-import { useState, useRef, useEffect, useCallback } from "react"
-import { Camera as CameraIcon, X, Loader2, Trash2, Sparkles, ZapOff } from 'lucide-react'
+import { useState, useRef, useEffect } from "react"
+import { X, Loader2, Trash2, Sparkles, ZapOff, Maximize2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { analisarImagem } from "../services/claudeAPI"
-import { incrementarPontos } from "../services/pontosService"
 import BarraNavegacao from "../components/BarraNavegacao"
 import logo from "../assets/Text.png"
 
 function Camera() {
     const navigate = useNavigate()
 
-    // estados da imagem capturada
-    const [imagem, setImagem]           = useState(null)  // URL para exibição
+    const [imagem, setImagem]             = useState(null)
     const [imagemBase64, setImagemBase64] = useState(null)
-    const [mediaType, setMediaType]     = useState('image/jpeg')
-
-    // estados da câmera ao vivo
-    const [streamAtivo, setStreamAtivo] = useState(false)
-    const [erroCamera, setErroCamera]   = useState(null)
-
-    // estados da análise
-    const [analisando, setAnalisando]   = useState(false)
-    const [resultado, setResultado]     = useState(null)
-    const [erro, setErro]               = useState(null)
+    const [mediaType, setMediaType]       = useState('image/jpeg')
+    const [streamAtivo, setStreamAtivo]   = useState(false)
+    const [erroCamera, setErroCamera]     = useState(null)
+    const [fullscreen, setFullscreen]     = useState(false)
+    const [analisando, setAnalisando]     = useState(false)
+    const [resultado, setResultado]       = useState(null)
+    const [erro, setErro]                 = useState(null)
 
     const videoRef  = useRef(null)
     const canvasRef = useRef(null)
-    const streamRef = useRef(null)  // guarda o stream para parar depois
+    const streamRef = useRef(null)
 
-    // Inicia a câmera ao montar o componente
     useEffect(() => {
         iniciarCamera()
-        return () => pararStream()  // cleanup ao sair da tela
+        return () => pararStream()
     }, [])
 
     async function iniciarCamera() {
@@ -41,19 +35,12 @@ function Camera() {
                 audio: false
             })
             streamRef.current = stream
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream
-            }
+            if (videoRef.current) videoRef.current.srcObject = stream
             setStreamAtivo(true)
         } catch (err) {
-            console.error('Erro ao abrir câmera:', err)
-            if (err.name === 'NotAllowedError') {
-                setErroCamera('Permissão de câmera negada. Libere nas configurações do navegador.')
-            } else if (err.name === 'NotFoundError') {
-                setErroCamera('Nenhuma câmera encontrada neste dispositivo.')
-            } else {
-                setErroCamera('Não foi possível acessar a câmera. Certifique-se de usar HTTPS.')
-            }
+            if (err.name === 'NotAllowedError')   setErroCamera('Permissão de câmera negada. Libere nas configurações do navegador.')
+            else if (err.name === 'NotFoundError') setErroCamera('Nenhuma câmera encontrada neste dispositivo.')
+            else setErroCamera('Não foi possível acessar a câmera. Certifique-se de usar HTTPS.')
         }
     }
 
@@ -65,22 +52,29 @@ function Camera() {
         setStreamAtivo(false)
     }
 
+    // Conecta o stream ao video quando o ref estiver disponível
+    function handleVideoRef(el) {
+        videoRef.current = el
+        if (el && streamRef.current) el.srcObject = streamRef.current
+    }
+
     function capturar() {
         const video  = videoRef.current
         const canvas = canvasRef.current
         if (!video || !canvas) return
 
-        canvas.width  = video.videoWidth
-        canvas.height = video.videoHeight
-        canvas.getContext('2d').drawImage(video, 0, 0)
+        const MAX_WIDTH = 800
+        const escala = Math.min(1, MAX_WIDTH / video.videoWidth)
+        canvas.width  = Math.round(video.videoWidth  * escala)
+        canvas.height = Math.round(video.videoHeight * escala)
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
 
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
-        const base64  = dataUrl.split(',')[1]
-
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.80)
         setImagem(dataUrl)
-        setImagemBase64(base64)
+        setImagemBase64(dataUrl.split(',')[1])
         setMediaType('image/jpeg')
-        pararStream()  // para o stream após captura para economizar bateria
+        pararStream()
+        setFullscreen(false)
     }
 
     function limparImagem() {
@@ -88,7 +82,7 @@ function Camera() {
         setImagemBase64(null)
         setResultado(null)
         setErro(null)
-        iniciarCamera()  // reabre a câmera para nova foto
+        iniciarCamera()
     }
 
     async function analisar() {
@@ -98,7 +92,6 @@ function Camera() {
         try {
             const resposta = await analisarImagem(imagemBase64, mediaType)
             setResultado(resposta)
-            await incrementarPontos(10)  // +10 pontos por análise
         } catch (err) {
             console.error(err)
             setErro('Erro ao analisar imagem. Tente novamente.')
@@ -118,13 +111,9 @@ function Camera() {
 
     const Header = () => (
         <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center flex-shrink-0">
-            <h1 className="text-white text-2xl font-bold tracking-wide">
-                Escanear Descarte
-            </h1>
+            <h1 className="text-white text-2xl font-bold tracking-wide">Escanear Descarte</h1>
             <div className="mt-2 flex items-center gap-2 opacity-80">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-blue-200">
-                    Powered by
-                </span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-blue-200">Powered by</span>
                 <img src={logo} alt="ReciclAI" className="h-5 w-auto object-contain" />
             </div>
         </div>
@@ -139,15 +128,13 @@ function Camera() {
                     <div className="h-full rounded-3xl overflow-hidden relative">
                         <img src={imagem} alt="Foto capturada" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/60" />
-
                         <button
                             onClick={limparImagem}
                             className="absolute top-3 right-3 bg-black/50 backdrop-blur-md p-2 rounded-full cursor-pointer hover:bg-black/70 transition z-10"
                         >
                             <X size={20} className="text-white" />
                         </button>
-
-                        <div className="absolute bottom-0 left-0 right-0 top-[40%] p-4 z-10 flex flex-col justify-end">
+                        <div className="absolute bottom-0 left-0 right-0 top-[38%] p-4 z-10 flex flex-col justify-end">
                             <div className="bg-white/90 backdrop-blur-md rounded-3xl p-5 shadow-2xl">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
@@ -159,18 +146,12 @@ function Camera() {
                                         {resultado.lixeira}
                                     </div>
                                 </div>
-
                                 <div className="h-px bg-gray-200 mb-3" />
-
-                                <p className="text-gray-700 text-sm leading-snug mb-3">
-                                    {resultado.explicacao}
-                                </p>
-
+                                <p className="text-gray-700 text-sm leading-snug mb-3">{resultado.explicacao}</p>
                                 <div className="flex items-start gap-2 mb-4">
                                     <Sparkles size={14} className="text-blue-600 flex-shrink-0 mt-0.5" />
                                     <p className="text-blue-800 text-xs leading-snug">{resultado.dica}</p>
                                 </div>
-
                                 <button
                                     onClick={() => navigate('/mapa', { state: { filtroTipo: resultado.tipoResiduo } })}
                                     className="w-full bg-blue-900 text-white py-3 rounded-2xl font-bold cursor-pointer hover:bg-blue-800 transition text-sm mb-2"
@@ -192,69 +173,54 @@ function Camera() {
         )
     }
 
-    // === ESTADO 2: FOTO CAPTURADA (aguardando análise) ===
+    // === ESTADO 2: FOTO CAPTURADA ===
     if (imagem) {
         return (
             <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
                 <Header />
-                <div className="flex-1 px-4 pt-4 pb-32 relative">
-                    <div className="h-full rounded-3xl overflow-hidden relative">
+                <div className="flex-1 px-4 pt-4 pb-24 flex flex-col gap-3 min-h-0">
+                    <div className="rounded-3xl overflow-hidden relative min-h-0 flex-1">
                         <img src={imagem} alt="Foto capturada" className="w-full h-full object-cover" />
-
                         <button
                             onClick={limparImagem}
                             className="absolute top-3 right-3 bg-black/50 backdrop-blur-md p-2 rounded-full cursor-pointer hover:bg-black/70 transition z-10"
                         >
                             <X size={20} className="text-white" />
                         </button>
-
-                        <div className="absolute bottom-4 left-4 right-4 z-10">
-                            <button
-                                onClick={analisar}
-                                disabled={analisando}
-                                className="w-full bg-blue-700/80 backdrop-blur-md text-white py-4 rounded-2xl font-bold text-lg cursor-pointer hover:bg-blue-700/95 transition disabled:opacity-50 flex items-center justify-center gap-2 border border-white/20 shadow-2xl"
-                            >
-                                {analisando ? (
-                                    <>
-                                        <Loader2 size={22} className="animate-spin" />
-                                        Analisando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Sparkles size={22} />
-                                        Analisar com IA
-                                    </>
-                                )}
-                            </button>
-                            {erro && (
-                                <div className="mt-2 bg-red-500/90 backdrop-blur-md text-white p-3 rounded-2xl text-sm text-center">
-                                    {erro}
-                                </div>
-                            )}
-                        </div>
                     </div>
+                    <button
+                        onClick={analisar}
+                        disabled={analisando}
+                        className="w-full bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg cursor-pointer hover:bg-blue-600 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg flex-shrink-0"
+                    >
+                        {analisando
+                            ? <><Loader2 size={22} className="animate-spin" />Analisando...</>
+                            : <><Sparkles size={22} />Analisar com IA</>
+                        }
+                    </button>
+                    {erro && (
+                        <div className="bg-red-100 border border-red-300 text-red-700 p-3 rounded-2xl text-sm text-center flex-shrink-0">
+                            {erro}
+                        </div>
+                    )}
                 </div>
                 <BarraNavegacao />
             </div>
         )
     }
 
-    // === ESTADO 1: VISOR DE CÂMERA AO VIVO ===
+    // === ESTADO 1: VISOR NORMAL ===
     return (
         <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
             <Header />
-
-            {/* Canvas escondido — só usado para capturar o frame */}
             <canvas ref={canvasRef} className="hidden" />
 
-            <div className="flex-1 px-4 pt-4 pb-32 relative">
+            <div className="flex-1 px-4 pt-4 pb-24 min-h-0">
                 <div className="h-full rounded-3xl overflow-hidden relative bg-black">
-
-                    {/* Erro de câmera */}
                     {erroCamera ? (
                         <div className="h-full flex flex-col items-center justify-center px-6 text-center gap-4">
-                            <div className="bg-red-100 rounded-full p-6">
-                                <ZapOff size={48} className="text-red-500" />
+                            <div className="bg-red-900/40 rounded-full p-6">
+                                <ZapOff size={48} className="text-red-400" />
                             </div>
                             <p className="text-white font-semibold text-base">{erroCamera}</p>
                             <button
@@ -266,37 +232,64 @@ function Camera() {
                         </div>
                     ) : (
                         <>
-                            {/* Visor de vídeo ao vivo */}
+                            {/* Vídeo — sempre montado, ref nunca some */}
                             <video
-                                ref={videoRef}
+                                ref={handleVideoRef}
                                 autoPlay
                                 playsInline
                                 muted
                                 className="w-full h-full object-cover"
                             />
 
-                            {/* Overlay sutil de mira */}
-                            {streamAtivo && (
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div className="w-56 h-56 border-2 border-white/40 rounded-3xl" />
+                            {/* Overlay clicável para entrar em fullscreen */}
+                            <div
+                                onClick={() => setFullscreen(true)}
+                                className="absolute inset-0 bg-black/10 hover:bg-black/20 transition cursor-pointer flex items-end justify-center pb-5"
+                            >
+                                <div className="bg-black/50 backdrop-blur-sm rounded-2xl px-5 py-2.5 flex items-center gap-2">
+                                    <Maximize2 size={16} className="text-white" />
+                                    <span className="text-white text-sm font-semibold">Toque para fotografar</span>
                                 </div>
-                            )}
-
-                            {/* Botão de captura */}
-                            <div className="absolute bottom-6 left-0 right-0 flex justify-center z-10">
-                                <button
-                                    onClick={capturar}
-                                    disabled={!streamAtivo}
-                                    className="w-20 h-20 rounded-full bg-white border-4 border-blue-700 cursor-pointer hover:scale-95 transition-transform active:scale-90 disabled:opacity-40 flex items-center justify-center shadow-2xl"
-                                    aria-label="Capturar foto"
-                                >
-                                    <div className="w-14 h-14 rounded-full bg-blue-700" />
-                                </button>
                             </div>
                         </>
                     )}
                 </div>
             </div>
+
+            {/* Overlay fullscreen — cobre tudo, stream continua no video acima */}
+            {fullscreen && (
+                <div className="fixed inset-0 bg-black z-50 flex flex-col">
+                    <video
+                        ref={el => { if (el && streamRef.current) el.srcObject = streamRef.current }}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="flex-1 w-full object-cover"
+                    />
+                    {/* Mira */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-64 h-64 border-2 border-white/50 rounded-3xl" />
+                    </div>
+                    {/* Botão fechar */}
+                    <button
+                        onClick={() => setFullscreen(false)}
+                        className="absolute top-14 left-5 bg-black/50 backdrop-blur-md p-3 rounded-full cursor-pointer hover:bg-black/70 transition z-10"
+                    >
+                        <X size={22} className="text-white" />
+                    </button>
+                    {/* Botão captura */}
+                    <div className="absolute bottom-14 left-0 right-0 flex justify-center z-10">
+                        <button
+                            onClick={capturar}
+                            disabled={!streamAtivo}
+                            className="w-20 h-20 rounded-full bg-white border-4 border-blue-700 cursor-pointer hover:scale-95 transition-transform active:scale-90 disabled:opacity-40 flex items-center justify-center shadow-2xl"
+                            aria-label="Capturar foto"
+                        >
+                            <div className="w-14 h-14 rounded-full bg-blue-700" />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <BarraNavegacao />
         </div>
