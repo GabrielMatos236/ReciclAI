@@ -55,7 +55,7 @@ function Recompensas() {
   }
 
   function bgPos(pos, ehEu) {
-    if (ehEu) return 'bg-emerald-100 border border-emerald-300'
+    if (ehEu) return 'bg-[#4AE273] border-2 border-[#015929]'
     if (pos === 1) return 'bg-yellow-50 border border-yellow-200'
     if (pos === 2) return 'bg-gray-50 border border-gray-200'
     if (pos === 3) return 'bg-amber-50 border border-amber-200'
@@ -64,10 +64,10 @@ function Recompensas() {
 
   const NIVEIS = [
     { nome: 'Iniciante',   min: 0,   max: 49,  cor: 'bg-gray-200',   texto: 'text-gray-700' },
-    { nome: 'Reciclador',  min: 50,  max: 149, cor: 'bg-green-200',  texto: 'text-green-800' },
+    { nome: 'Reciclador',  min: 50,  max: 149, cor: 'bg-[#4AE273]',  texto: 'text-[#015929]' },
     { nome: 'Guardião',    min: 150, max: 349, cor: 'bg-blue-200',   texto: 'text-blue-800' },
     { nome: 'Eco-Herói',   min: 350, max: 699, cor: 'bg-purple-200', texto: 'text-purple-800' },
-    { nome: 'Lenda Verde', min: 700, max: Infinity, cor: 'bg-emerald-300', texto: 'text-emerald-900' },
+    { nome: 'Lenda Verde', min: 700, max: Infinity, cor: 'bg-[#4AE273]', texto: 'text-[#015929]' },
   ]
 
   function nivelAtual(pontos) {
@@ -125,7 +125,7 @@ function Recompensas() {
                 {/* Barra de progresso */}
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    className="h-full bg-[#4AE273] rounded-full transition-all"
                     style={{ width: `${progresso}%` }}
                   />
                 </div>
@@ -179,7 +179,7 @@ function Recompensas() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-blue-900 font-semibold text-sm truncate">
-                        {usuario.nome} {ehEu && <span className="text-emerald-600 text-xs">(você)</span>}
+                        {usuario.nome} {ehEu && <span className="text-[#015929] text-xs">(você)</span>}
                       </p>
                     </div>
                     <p className="text-blue-900 font-bold text-sm flex-shrink-0">

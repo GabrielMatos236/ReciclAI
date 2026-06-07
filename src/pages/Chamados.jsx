@@ -116,9 +116,9 @@ function Chamados() {
       </div>
 
       <div className="px-6 -mt-4">
-        <div className="bg-green-300 rounded-3xl p-6 shadow-lg">
+        <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-6 shadow-lg">
           <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle size={28} className="text-purple-900" />
+            <AlertTriangle size={28} className="text-[#015929]" />
             <h2 className="text-purple-900 text-xl font-bold">
               Abrir chamado
             </h2>
@@ -171,7 +171,7 @@ function Chamados() {
           )}
 
           {sucesso && (
-            <div className="bg-green-100 border border-green-300 text-green-800 p-3 rounded-xl mb-4 text-sm">
+            <div className="bg-[#4AE273] border-2 border-[#015929] text-[#015929] p-3 rounded-xl mb-4 text-sm">
               {sucesso}
             </div>
           )}
