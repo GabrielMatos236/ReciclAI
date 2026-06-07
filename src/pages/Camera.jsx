@@ -135,7 +135,7 @@ function Camera() {
         return (
             <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
                 <Header />
-                <div className="flex-1 px-4 pt-4 pb-32 relative">
+                <div className="flex-1 px-4 pt-4 pb-24 relative">
                     <div className="h-full rounded-3xl overflow-hidden relative">
                         <img src={imagem} alt="Foto capturada" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/60" />
@@ -169,12 +169,6 @@ function Camera() {
                                 <div className="flex items-start gap-2 mb-4">
                                     <Sparkles size={14} className="text-blue-600 flex-shrink-0 mt-0.5" />
                                     <p className="text-blue-800 text-xs leading-snug">{resultado.dica}</p>
-                                </div>
-
-                                {/* Badge de pontos ganhos */}
-                                <div className="flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-800 rounded-2xl py-2 mb-3 text-sm font-semibold">
-                                    <Sparkles size={14} />
-                                    +10 pontos ganhos!
                                 </div>
 
                                 <button
