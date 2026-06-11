@@ -13,16 +13,17 @@ export function AuthProvider({ children }) {
     const [carregando, setCarregando] = useState(true)
 
     useEffect(() => {
-        // onAuthStateChange com INITIAL_SESSION cobre todos os casos:
-        // - primeiro load, reload, pull-to-refresh, volta do background, login, logout
-        // O Supabase dispara INITIAL_SESSION automaticamente ao montar,
-        // então não precisamos chamar getSession() separado.
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                 if (session?.user) {
-                    await carregarPerfil(session.user)
+                    // Seta o user e libera o carregando IMEDIATAMENTE
+                    // O perfil carrega em background sem bloquear a tela
+                    setUser(session.user)
+                    setCarregando(false)
+                    carregarPerfil(session.user)
+                } else {
+                    setCarregando(false)
                 }
-                setCarregando(false)
             } else if (event === 'SIGNED_OUT') {
                 setPerfil(null)
                 setUser(null)
@@ -34,7 +35,6 @@ export function AuthProvider({ children }) {
     }, [])
 
     async function carregarPerfil(authUser) {
-        setUser(authUser)
         try {
             const { data } = await supabase
                 .from('perfis')
