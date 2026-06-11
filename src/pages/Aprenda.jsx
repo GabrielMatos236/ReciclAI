@@ -91,7 +91,7 @@ const CATEGORIAS = [
   {
     id: 'metal',
     label: 'Metal',
-    cor: '#a16207',
+    cor: '#f5ca03',
     icone: '🥫',
     descricao: 'Amasse as latas antes de descartar — ocupam menos espaço e facilitam o transporte até a cooperativa.',
     reciclaveis: [
