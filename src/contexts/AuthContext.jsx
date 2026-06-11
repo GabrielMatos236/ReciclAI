@@ -3,21 +3,18 @@ import { supabase } from '../services/supabase'
 
 const AuthContext = createContext(null)
 
-// Hook pra usar em qualquer componente
 export function usePerfil() {
     return useContext(AuthContext)
 }
 
 export function AuthProvider({ children }) {
-    const [perfil, setPerfil]     = useState(null)
-    const [user, setUser]         = useState(null)
+    const [perfil, setPerfil]         = useState(null)
+    const [user, setUser]             = useState(null)
     const [carregando, setCarregando] = useState(true)
 
     useEffect(() => {
-        // Carrega sessão e perfil na inicialização
         async function inicializar() {
             const { data: { session } } = await supabase.auth.getSession()
-
             if (session?.user) {
                 await carregarPerfil(session.user)
             }
@@ -36,7 +33,26 @@ export function AuthProvider({ children }) {
             }
         })
 
-        return () => subscription.unsubscribe()
+        // Revalida sessão quando app volta do background (iOS)
+        const handleVisibilityChange = async () => {
+            if (document.visibilityState === 'visible') {
+                const { data: { session } } = await supabase.auth.getSession()
+                if (session?.user) {
+                    await carregarPerfil(session.user)
+                } else {
+                    setPerfil(null)
+                    setUser(null)
+                }
+                setCarregando(false)
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+
+        return () => {
+            subscription.unsubscribe()
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
+        }
     }, [])
 
     async function carregarPerfil(authUser) {
@@ -49,7 +65,6 @@ export function AuthProvider({ children }) {
         if (data) setPerfil(data)
     }
 
-    // Atualiza o perfil no contexto (chamado pelo Perfil.jsx após editar nome)
     function atualizarPerfil(novosDados) {
         setPerfil(prev => ({ ...prev, ...novosDados }))
     }
