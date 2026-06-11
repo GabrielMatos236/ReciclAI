@@ -6,21 +6,25 @@ import Camera from "./pages/Camera"
 import Mapa from "./pages/Mapa"
 import FuncionarioHome from "./pages/FuncionarioHome"
 import FuncionarioChamados from "./pages/FuncionarioChamados"
+import FuncionarioMapa from "./pages/FuncionarioMapa"
 import Chamados from "./pages/Chamados"
 import Aprenda from "./pages/Aprenda"
 import Recompensas from "./pages/Recompensas"
 import Perfil from "./pages/Perfil"
 import RotaPrivada from "./components/RotaPrivada"
 import Layout from "./components/Layout"
+import LayoutFuncionario from "./components/LayoutFuncionario"
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* Rotas públicas */}
           <Route path="/" element={<Login />} />
           <Route path="/cadastro" element={<Login />} />
 
+          {/* Rotas do usuário — com navbar do usuário */}
           <Route element={<Layout />}>
             <Route path="/home"        element={<RotaPrivada><Home /></RotaPrivada>} />
             <Route path="/camera"      element={<RotaPrivada><Camera /></RotaPrivada>} />
@@ -31,8 +35,12 @@ function App() {
             <Route path="/perfil"      element={<RotaPrivada><Perfil /></RotaPrivada>} />
           </Route>
 
-          <Route path="/funcionario/home"     element={<RotaPrivada><FuncionarioHome /></RotaPrivada>} />
-          <Route path="/funcionario/chamados" element={<RotaPrivada><FuncionarioChamados /></RotaPrivada>} />
+          {/* Rotas do funcionário — com navbar do funcionário */}
+          <Route element={<LayoutFuncionario />}>
+            <Route path="/funcionario/home"     element={<RotaPrivada><FuncionarioHome /></RotaPrivada>} />
+            <Route path="/funcionario/chamados" element={<RotaPrivada><FuncionarioChamados /></RotaPrivada>} />
+            <Route path="/funcionario/mapa"     element={<RotaPrivada><FuncionarioMapa /></RotaPrivada>} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
