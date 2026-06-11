@@ -1,59 +1,25 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../services/supabase'
+import { Navigate } from "react-router-dom"
+import { usePerfil } from "../contexts/AuthContext"
 
-const AuthContext = createContext(null)
+function RotaPrivada({ children }) {
+    const { user, carregando } = usePerfil()
 
-export function usePerfil() {
-    return useContext(AuthContext)
-}
-
-export function AuthProvider({ children }) {
-    const [perfil, setPerfil]         = useState(null)
-    const [user, setUser]             = useState(null)
-    const [carregando, setCarregando] = useState(true)
-
-    useEffect(() => {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                if (session?.user) {
-                    // Seta o user e libera o carregando IMEDIATAMENTE
-                    // O perfil carrega em background sem bloquear a tela
-                    setUser(session.user)
-                    setCarregando(false)
-                    carregarPerfil(session.user)
-                } else {
-                    setCarregando(false)
-                }
-            } else if (event === 'SIGNED_OUT') {
-                setPerfil(null)
-                setUser(null)
-                setCarregando(false)
-            }
-        })
-
-        return () => subscription.unsubscribe()
-    }, [])
-
-    async function carregarPerfil(authUser) {
-        try {
-            const { data } = await supabase
-                .from('perfis')
-                .select('*')
-                .eq('id', authUser.id)
-                .single()
-            if (data) setPerfil(data)
-        } catch (err) {
-            console.error('Erro ao carregar perfil:', err)
-        }
+    if (carregando) {
+        return (
+            <div className="min-h-screen bg-gradient-to-tr from-blue-950 to-blue-700 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <p className="text-white/70 text-sm font-medium">Carregando...</p>
+                </div>
+            </div>
+        )
     }
 
-    function atualizarPerfil(novosDados) {
-        setPerfil(prev => ({ ...prev, ...novosDados }))
+    if (!user) {
+        return <Navigate to="/" replace />
     }
 
-    return (
-        <AuthContext.Provider value={{ perfil, user, carregando, atualizarPerfil }}>
-            {children}
-        </AuthContext.Provider>
-    )
+    return children
 }
+
+export default RotaPrivada
