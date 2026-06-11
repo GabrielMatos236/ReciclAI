@@ -88,16 +88,16 @@ function FuncionarioHome() {
 
       {/* Card resumo */}
       <div className="px-6 -mt-14">
-        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+        <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-5 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
-            <CheckCircle2 size={30} className="text-blue-900" strokeWidth={2.5} />
+            <CheckCircle2 size={30} className="text-[#015929]" strokeWidth={2.5} />
             <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
 
           <div className="flex justify-around items-center">
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <Clock size={22} className="text-blue-900" />
+                <Clock size={22} className="text-[#015929]" />
               </div>
               <p className="text-blue-900 text-xs">Pendentes</p>
               <p className="text-blue-900 text-2xl font-bold">{pendentes}</p>
@@ -107,7 +107,7 @@ function FuncionarioHome() {
 
             <div className="text-center">
               <div className="flex justify-center mb-1">
-                <CheckCircle2 size={22} className="text-blue-900" />
+                <CheckCircle2 size={22} className="text-[#015929]" />
               </div>
               <p className="text-blue-900 text-xs">Encerrados</p>
               <p className="text-blue-900 text-2xl font-bold">{encerrados}</p>
@@ -122,8 +122,8 @@ function FuncionarioHome() {
           onClick={() => navigate("/funcionario/chamados")}
           className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
         >
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <ClipboardList size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <ClipboardList size={24} className="text-[#015929]" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">
             Chamados
@@ -134,8 +134,8 @@ function FuncionarioHome() {
           onClick={() => navigate("/funcionario/mapa")}
           className="flex flex-col items-center gap-1.5 cursor-pointer flex-1"
         >
-          <div className="bg-emerald-200 rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:bg-emerald-300 transition">
-            <MapPin size={24} className="text-black" />
+          <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
+            <MapPin size={24} className="text-[#015929]" />
           </div>
           <span className="text-black text-[10px] font-semibold text-center leading-tight">
             Pontos de Descarte
@@ -149,7 +149,7 @@ function FuncionarioHome() {
           onClick={() => navigate("/funcionario/chamados")}
           className="w-full bg-white border-2 border-gray-300 rounded-3xl py-8 px-6 cursor-pointer hover:border-blue-700 transition flex flex-col items-center gap-2"
         >
-          <ClipboardList size={36} className="text-black" strokeWidth={1.5} />
+          <ClipboardList size={36} className="text-blue-900" strokeWidth={1.5} />
           <span className="text-black text-base font-bold tracking-wide">
             GERENCIAR CHAMADOS
           </span>

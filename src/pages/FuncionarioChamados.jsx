@@ -103,9 +103,9 @@ function FuncionarioChamados() {
 
       {/* Card de destaque */}
       <div className="px-6 -mt-14">
-        <div className="bg-emerald-200 rounded-3xl p-5 shadow-lg">
+        <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-5 shadow-lg">
           <div className="flex items-center gap-3 mb-3">
-            <ClipboardCheck size={30} className="text-blue-900" strokeWidth={2.5} />
+            <ClipboardCheck size={30} className="text-[#015929]" strokeWidth={2.5} />
             <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
           </div>
 
