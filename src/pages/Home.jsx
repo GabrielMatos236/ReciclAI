@@ -118,7 +118,7 @@ function Home() {
           <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
             <Trash2 size={24} className="text-[#015929]" />
           </div>
-          <span className="text-black text-[10px] font-semibold text-center leading-tight">Abrir Chamado</span>
+          <span className="text-black text-[10px] font-semibold text-center leading-tight">Chamados e Ocorrências </span>
         </button>
         <button onClick={() => navigate('/aprenda')} className="flex flex-col items-center gap-1.5 cursor-pointer flex-1">
           <div className="bg-[#4AE273] border-2 border-[#015929] rounded-xl p-3 w-14 h-14 flex items-center justify-center hover:opacity-90 transition">
