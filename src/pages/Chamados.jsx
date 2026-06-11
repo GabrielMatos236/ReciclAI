@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Send, ClipboardList } from "lucide-react"
 import { supabase } from "../services/supabase"
-import BarraNavegacao from "../components/BarraNavegacao"
 import Text from "../assets/Text.png"
 
 function Chamados() {
@@ -316,7 +315,6 @@ function Chamados() {
         </div>
       )}
 
-      <BarraNavegacao />
     </div>
   )
 }

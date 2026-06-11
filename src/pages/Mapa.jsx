@@ -29,8 +29,8 @@ function criarIcone(cor) {
 function Mapa() {
   const location = useLocation()
 
-  const [lixeiras, setLixeiras]       = useState([])
-  const [carregando, setCarregando]   = useState(true)
+  const [lixeiras, setLixeiras]         = useState([])
+  const [carregando, setCarregando]     = useState(true)
   const [filtroPredio, setFiltroPredio] = useState(null)
   const [filtroTipo,   setFiltroTipo]   = useState(location.state?.filtroTipo || null)
   const [painelAberto, setPainelAberto] = useState(!!location.state?.filtroTipo)
@@ -139,8 +139,8 @@ function Mapa() {
             )}
           </div>
           {painelAberto
-            ? <ChevronDown size={18} className="text-blue-900" />
-            : <ChevronUp   size={18} className="text-blue-900" />
+            ? <ChevronUp   size={18} className="text-blue-900" />
+            : <ChevronDown size={18} className="text-blue-900" />
           }
         </button>
 
@@ -180,9 +180,6 @@ function Mapa() {
             </p>
             <div className="flex flex-wrap gap-2">
               {TIPOS.map(tipo => {
-                const corConfig = Object.entries(CONFIG_CORES).find(([_, v]) =>
-                  lixeiras.find(l => l.tipo === tipo && l.cor === Object.keys(CONFIG_CORES).find(k => CONFIG_CORES[k] === v))
-                )
                 const lixeiraDoTipo = lixeiras.find(l => l.tipo === tipo)
                 const cor = CONFIG_CORES[lixeiraDoTipo?.cor]?.hex || '#6b7280'
                 const ativo = filtroTipo === tipo

@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { analisarImagem } from "../services/claudeAPI"
 import logo from "../assets/Text.png"
 
+// Tipos que existem no banco de lixeiras — usados para filtrar o mapa
+const TIPOS_VALIDOS_MAPA = ['Orgânico', 'Vidro', 'Papel', 'Plástico', 'Metal']
+
 function Camera() {
     const navigate = useNavigate()
 
@@ -51,7 +54,6 @@ function Camera() {
         setStreamAtivo(false)
     }
 
-    // Conecta o stream ao video quando o ref estiver disponível
     function handleVideoRef(el) {
         videoRef.current = el
         if (el && streamRef.current) el.srcObject = streamRef.current
@@ -97,6 +99,14 @@ function Camera() {
         } finally {
             setAnalisando(false)
         }
+    }
+
+    function irParaMapa() {
+        // Só passa o filtro se o tipo retornado pela IA existir no banco
+        const tipoParaMapa = TIPOS_VALIDOS_MAPA.includes(resultado.tipoResiduo)
+            ? resultado.tipoResiduo
+            : null
+        navigate('/mapa', { state: { filtroTipo: tipoParaMapa } })
     }
 
     const coresLixeira = {
@@ -152,7 +162,7 @@ function Camera() {
                                     <p className="text-blue-800 text-xs leading-snug">{resultado.dica}</p>
                                 </div>
                                 <button
-                                    onClick={() => navigate('/mapa', { state: { filtroTipo: resultado.tipoResiduo } })}
+                                    onClick={irParaMapa}
                                     className="w-full bg-blue-900 text-white py-3 rounded-2xl font-bold cursor-pointer hover:bg-blue-800 transition text-sm mb-2"
                                 >
                                     Ver Lixeira no Mapa
@@ -166,7 +176,8 @@ function Camera() {
                             </div>
                         </div>
                     </div>
-                </div>            </div>
+                </div>
+            </div>
         )
     }
 
@@ -200,7 +211,8 @@ function Camera() {
                             {erro}
                         </div>
                     )}
-                </div>            </div>
+                </div>
+            </div>
         )
     }
 
@@ -227,7 +239,6 @@ function Camera() {
                         </div>
                     ) : (
                         <>
-                            {/* Vídeo — sempre montado, ref nunca some */}
                             <video
                                 ref={handleVideoRef}
                                 autoPlay
@@ -236,7 +247,6 @@ function Camera() {
                                 className="w-full h-full object-cover"
                             />
 
-                            {/* Overlay clicável para entrar em fullscreen */}
                             <div
                                 onClick={() => setFullscreen(true)}
                                 className="absolute inset-0 bg-black/10 hover:bg-black/20 transition cursor-pointer flex items-end justify-center pb-5"
@@ -251,7 +261,6 @@ function Camera() {
                 </div>
             </div>
 
-            {/* Overlay fullscreen — cobre tudo, stream continua no video acima */}
             {fullscreen && (
                 <div className="fixed inset-0 bg-black z-50 flex flex-col">
                     <video
@@ -261,18 +270,15 @@ function Camera() {
                         muted
                         className="flex-1 w-full object-cover"
                     />
-                    {/* Mira */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="w-64 h-64 border-2 border-white/50 rounded-3xl" />
                     </div>
-                    {/* Botão fechar */}
                     <button
                         onClick={() => setFullscreen(false)}
                         className="absolute top-14 left-5 bg-black/50 backdrop-blur-md p-3 rounded-full cursor-pointer hover:bg-black/70 transition z-10"
                     >
                         <X size={22} className="text-white" />
                     </button>
-                    {/* Botão captura */}
                     <div className="absolute bottom-14 left-0 right-0 flex justify-center z-10">
                         <button
                             onClick={capturar}

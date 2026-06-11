@@ -16,21 +16,18 @@ function Login() {
   const navigate = useNavigate()
 
   const [fase, setFase] = useState(FASE.SPLASH)
-  const [splashSaindo, setSplashSaindo] = useState(false)  // controla fade-out do splash
-  const [formVisivel, setFormVisivel] = useState(false)     // controla fade-in do form
+  const [splashSaindo, setSplashSaindo] = useState(false)
+  const [formVisivel, setFormVisivel] = useState(false)
 
-  // Campos de login
   const [email, setEmail]   = useState('')
   const [senha, setSenha]   = useState('')
 
-  // Campos extras de cadastro
   const [nome, setNome]     = useState('')
   const [tipo, setTipo]     = useState('usuario')
 
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro]             = useState(null)
 
-  // Sequência do splash: 2s visível → fade out → mostra escolha
   useEffect(() => {
     const timerSair = setTimeout(() => {
       setSplashSaindo(true)
@@ -39,7 +36,7 @@ function Login() {
     const timerProximo = setTimeout(() => {
       setFase(FASE.ESCOLHA)
       setSplashSaindo(false)
-    }, 2600) // 2000ms + 600ms de fade
+    }, 2600)
 
     return () => {
       clearTimeout(timerSair)
@@ -47,7 +44,6 @@ function Login() {
     }
   }, [])
 
-  // Fade-in do form ao entrar em login/cadastro
   useEffect(() => {
     if (fase === FASE.LOGIN || fase === FASE.CADASTRO) {
       setFormVisivel(false)
@@ -102,19 +98,14 @@ function Login() {
     setCarregando(true)
     setErro(null)
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // O trigger on_auth_user_created cria o perfil automaticamente
+      // usando nome e tipo passados via options.data
+      const { error } = await supabase.auth.signUp({
         email,
         password: senha,
         options: { data: { nome, tipo } }
       })
       if (error) throw error
-
-      if (data.user) {
-        const { error: perfilError } = await supabase
-          .from('perfis')
-          .insert({ id: data.user.id, nome, tipo, pontos: 0 })
-        if (perfilError) throw perfilError
-      }
 
       navigate(tipo === 'funcionario' ? '/funcionario/home' : '/home')
     } catch (err) {
@@ -160,7 +151,6 @@ function Login() {
     )
   }
 
-  // Gradiente de fundo compartilhado por escolha/login/cadastro
   const bgStyle = { background: 'linear-gradient(135deg, #0a1628 0%, #1d4ed8 100%)' }
 
   // ── TELA DE ESCOLHA ─────────────────────────────────────────────────────────
@@ -170,15 +160,12 @@ function Login() {
         className="h-screen flex flex-col items-center justify-between py-20 px-8"
         style={bgStyle}
       >
-        {/* Logo */}
         <div className="flex flex-col items-center gap-4 mt-8">
           <img src={logo} alt="ReciclAI ícone" className="w-28 h-28 object-contain" />
           <img src={textLogo} alt="ReciclAI" className="w-44 object-contain" />
         </div>
 
-        {/* Botões */}
         <div className="w-full flex flex-col gap-4">
-          {/* Login — fundo branco, texto azul */}
           <button
             onClick={irParaLogin}
             className="w-full py-4 rounded-2xl font-bold text-lg cursor-pointer transition-all active:scale-95"
@@ -187,7 +174,6 @@ function Login() {
             Entrar
           </button>
 
-          {/* Cadastro — só borda, texto branco */}
           <button
             onClick={irParaCadastro}
             className="w-full py-4 rounded-2xl font-bold text-lg cursor-pointer transition-all active:scale-95"
@@ -208,7 +194,6 @@ function Login() {
       className="h-screen flex flex-col"
       style={bgStyle}
     >
-      {/* Área do logo — encolhe para dar espaço ao form */}
       <div
         className="flex flex-col items-center justify-center flex-shrink-0"
         style={{ paddingTop: '3rem', paddingBottom: '2rem' }}
@@ -217,7 +202,6 @@ function Login() {
         <img src={textLogo} alt="ReciclAI" className="w-36 object-contain" />
       </div>
 
-      {/* Card do form — cresce a partir de baixo */}
       <div
         className="flex-1 rounded-t-[32px] flex flex-col px-7 pt-8 pb-10"
         style={{
@@ -238,7 +222,6 @@ function Login() {
           onSubmit={ehCadastro ? handleCadastro : handleLogin}
           className="flex flex-col gap-3 flex-1"
         >
-          {/* Campo extra: nome (só no cadastro) */}
           {ehCadastro && (
             <input
               type="text"
@@ -269,7 +252,6 @@ function Login() {
             className="w-full px-4 py-3.5 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-blue-700 bg-gray-50"
           />
 
-          {/* Seletor de tipo (só cadastro) */}
           {ehCadastro && (
             <div className="flex gap-2">
               <button
@@ -297,14 +279,12 @@ function Login() {
             </div>
           )}
 
-          {/* Erro */}
           {erro && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm">
               {erro}
             </div>
           )}
 
-          {/* Botão de submit */}
           <button
             type="submit"
             disabled={carregando}
@@ -316,7 +296,6 @@ function Login() {
               : (ehCadastro ? 'Criar conta' : 'Entrar')}
           </button>
 
-          {/* Trocar entre login e cadastro */}
           <p className="text-center text-gray-400 text-sm mt-auto pt-4">
             {ehCadastro ? 'Já tem conta? ' : 'Não tem conta? '}
             <span
