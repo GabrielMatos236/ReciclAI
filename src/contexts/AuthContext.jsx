@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { supabase } from '../services/supabase'
 
 const AuthContext = createContext(null)
@@ -11,6 +11,9 @@ export function AuthProvider({ children }) {
     const [perfil, setPerfil]         = useState(null)
     const [user, setUser]             = useState(null)
     const [carregando, setCarregando] = useState(true)
+
+    // Guard: evita múltiplas chamadas simultâneas ao visibilitychange
+    const carregandoPerfil = useRef(false)
 
     useEffect(() => {
         async function inicializar() {
@@ -33,17 +36,25 @@ export function AuthProvider({ children }) {
             }
         })
 
-        // Revalida sessão quando app volta do background (iOS)
+        // Revalida sessão quando app volta do background (iOS/Android)
         const handleVisibilityChange = async () => {
             if (document.visibilityState === 'visible') {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (session?.user) {
-                    await carregarPerfil(session.user)
-                } else {
-                    setPerfil(null)
-                    setUser(null)
+                // Se já tem uma chamada em andamento, ignora
+                if (carregandoPerfil.current) return
+                carregandoPerfil.current = true
+
+                try {
+                    const { data: { session } } = await supabase.auth.getSession()
+                    if (session?.user) {
+                        await carregarPerfil(session.user)
+                    } else {
+                        setPerfil(null)
+                        setUser(null)
+                    }
+                    setCarregando(false)
+                } finally {
+                    carregandoPerfil.current = false
                 }
-                setCarregando(false)
             }
         }
 
