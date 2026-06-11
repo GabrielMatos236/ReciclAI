@@ -15,10 +15,22 @@ function Chamados() {
   const [erro, setErro] = useState(null)
   const [sucesso, setSucesso] = useState(null)
 
+  // Recarrega ao trocar de aba
   useEffect(() => {
     if (aba !== "abrir") {
       carregarMeusChamados()
     }
+  }, [aba])
+
+  // Recarrega quando o app volta do background (iOS) ou de outra aba
+  useEffect(() => {
+    const handleVisibilidade = () => {
+      if (document.visibilityState === 'visible' && aba !== 'abrir') {
+        carregarMeusChamados()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilidade)
+    return () => document.removeEventListener('visibilitychange', handleVisibilidade)
   }, [aba])
 
   async function carregarMeusChamados() {

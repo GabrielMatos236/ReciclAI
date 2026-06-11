@@ -1,39 +1,21 @@
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { supabase } from "../services/supabase";
+import { Navigate } from "react-router-dom"
+import { usePerfil } from "../contexts/AuthContext"
 
 function RotaPrivada({ children }) {
-    const [carregando, setCarregando] = useState(true)
-    const [autenticado, setAutenticado] = useState(false)
+    const { user, carregando } = usePerfil()
 
-    useEffect(() => {
-        //verificar sessão ativa
-        async function verificarSessao() {
-            const { data: { session} } = await supabase.auth.getSession()
-            setAutenticado(!!session)
-            setCarregando(false)
-        }
-
-        verificarSessao()
-
-        //verificar mudanças de autenticação em outras abas
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-            setAutenticado(!!session)
-        })
-
-        //Cleanup: cancela a inscrição quando o componente for desmontado
-        return () => subscription.unsubscribe()
-    }, [])
-
-    if(carregando){
+    if (carregando) {
         return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <p className="text-purple-900 font-semibold">Carregando...</p>
+            <div className="min-h-screen bg-gradient-to-tr from-blue-950 to-blue-700 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <p className="text-white/70 text-sm font-medium">Carregando...</p>
+                </div>
             </div>
         )
     }
 
-    if(!autenticado) {
+    if (!user) {
         return <Navigate to="/" replace />
     }
 
