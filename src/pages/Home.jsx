@@ -46,7 +46,7 @@ function Home() {
   const nivel = nivelAtual(perfil?.pontos || 0)
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-24">
+    <div className="min-h-screen bg-gray-100 pb-24 flex flex-col">
 
       {/* Header */}
       <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
@@ -151,11 +151,12 @@ function Home() {
         </button>
       </div>
 
-      {/* Card SCAN IT */}
-      <div className="px-6 mt-5">
+      {/* Card SCAN IT — cresce para ocupar o espaço disponível, mantendo
+          distância fixa dos botões (acima) e da barra de navegação (abaixo) */}
+      <div className="px-6 mt-5 flex-1 flex flex-col">
         <button
           onClick={() => navigate('/camera')}
-          className="w-full bg-white border-2 border-gray-300 rounded-3xl py-8 cursor-pointer hover:border-blue-700 transition flex flex-col items-center gap-2"
+          className="w-full flex-1 bg-white border-2 border-gray-300 rounded-3xl cursor-pointer hover:border-blue-700 transition flex flex-col items-center justify-center gap-2"
         >
           <CameraIcon size={36} className="text-blue-900" strokeWidth={1.5} />
           <span className="text-black text-base font-bold tracking-wide">ESCANEAR DESCARTE</span>
