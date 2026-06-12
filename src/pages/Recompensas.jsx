@@ -133,7 +133,7 @@ function Recompensas() {
     <div className="min-h-screen bg-gray-100 pb-24">
 
       {/* Header */}
-      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center relative">
+      <div className="sticky top-0 z-30 bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center relative">
         <button
           onClick={() => navigate('/home')}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-blue-800/60 p-2 rounded-full cursor-pointer hover:bg-blue-800 transition"

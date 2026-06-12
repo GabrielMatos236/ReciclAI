@@ -99,7 +99,7 @@ function Perfil() {
         <div className="min-h-screen bg-gray-100 pb-28">
 
             {/* Header com recorte circular para o avatar */}
-            <div className="relative bg-gradient-to-tr from-blue-950 to-blue-700 pt-12 pb-0">
+            <div className="sticky top-0 z-30 bg-gradient-to-tr from-blue-950 to-blue-700 pt-12 pb-0">
 
                 {/* Botão voltar */}
                 <button
