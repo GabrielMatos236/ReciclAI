@@ -127,7 +127,7 @@ function FuncionarioChamados() {
     <div className="min-h-screen bg-gray-100 pb-8">
 
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 px-6 pt-12 pb-24">
         <div className="flex justify-between items-center mb-8">
           <img src={Text} alt="ReciclAI" className="h-10" />
 
