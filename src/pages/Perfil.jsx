@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, Calendar, LogOut, Edit2, Check, X, Shield, Lock, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Mail, Calendar, LogOut, Edit2, Check, X, Shield, Lock, Eye, EyeOff, Info } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
+import logo from '../assets/logo.png'
 
 function Perfil() {
     const navigate = useNavigate()
@@ -24,6 +25,9 @@ function Perfil() {
     const [confirmarSenha, setConfirmarSenha] = useState('')
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [salvandoSenha, setSalvandoSenha] = useState(false)
+
+    // Informações do app
+    const [infoAberta, setInfoAberta] = useState(false)
 
     // Feedback
     const [feedback, setFeedback] = useState(null)
@@ -258,6 +262,54 @@ function Perfil() {
                             >
                                 {salvandoSenha ? 'Salvando...' : 'Salvar nova senha'}
                             </button>
+                        </div>
+                    )}
+
+                    {/* Informações do aplicativo */}
+                    <button
+                        onClick={() => setInfoAberta(p => !p)}
+                        className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition cursor-pointer border-b border-gray-100"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                            <Info size={15} className="text-emerald-700" />
+                        </div>
+                        <div className="text-left flex-1">
+                            <p className="text-blue-900 text-sm font-semibold">Informações do aplicativo</p>
+                            <p className="text-gray-400 text-xs">Versão, equipe e créditos</p>
+                        </div>
+                        <X size={16} className={`text-gray-300 transition-transform ${infoAberta ? 'rotate-0' : 'rotate-45'}`} />
+                    </button>
+
+                    {/* Painel de informações do app */}
+                    {infoAberta && (
+                        <div className="px-5 py-4 bg-gray-50 border-b border-gray-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                <img src={logo} alt="ReciclAI" className="w-10 h-10 object-contain" />
+                                <div>
+                                    <p className="text-blue-900 text-sm font-bold">ReciclAI</p>
+                                    <p className="text-gray-400 text-xs">Versão 1.0</p>
+                                </div>
+                            </div>
+
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Desenvolvido por</p>
+                            <div className="flex flex-col gap-2 mb-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-blue-700 text-xs font-bold">G</span>
+                                    </div>
+                                    <p className="text-blue-900 text-sm font-semibold">Gabriel Matos</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-blue-700 text-xs font-bold">R</span>
+                                    </div>
+                                    <p className="text-blue-900 text-sm font-semibold">Rafael</p>
+                                </div>
+                            </div>
+
+                            <p className="text-gray-400 text-xs">
+                                Projeto acadêmico sobre descarte sustentável e classificação de resíduos por IA. 🌱
+                            </p>
                         </div>
                     )}
 
