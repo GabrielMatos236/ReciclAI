@@ -151,8 +151,7 @@ function Home() {
         </button>
       </div>
 
-      {/* Card SCAN IT — cresce para ocupar o espaço disponível, mantendo
-          distância fixa dos botões (acima) e da barra de navegação (abaixo) */}
+      {/* Card SCAN IT */}
       <div className="px-6 mt-5 flex-1 flex flex-col">
         <button
           onClick={() => navigate('/camera')}
