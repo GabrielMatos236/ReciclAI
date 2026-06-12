@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Send, ClipboardList } from "lucide-react"
+import { ArrowLeft, Send, ClipboardList, QrCode, X, MapPin } from "lucide-react"
 import { supabase } from "../services/supabase"
+import QrScanner from "../components/QrScanner"
 import Text from "../assets/Text.png"
+
+// Formato esperado dentro do QR Code impresso nas lixeiras
+const REGEX_QR_LIXEIRA = /^RECICLAI-LIXEIRA-(\d+)$/
 
 function Chamados() {
   const navigate = useNavigate()
@@ -14,6 +18,12 @@ function Chamados() {
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(null)
   const [sucesso, setSucesso] = useState(null)
+
+  // Lixeira vinculada via QR Code (opcional)
+  const [lixeiraId, setLixeiraId]     = useState(null)
+  const [lixeiraInfo, setLixeiraInfo] = useState(null)
+  const [scannerAberto, setScannerAberto] = useState(false)
+  const [erroScan, setErroScan]       = useState(null)
 
   // Recarrega ao trocar de aba
   useEffect(() => {
@@ -60,7 +70,60 @@ function Chamados() {
       return
     }
 
-    setMeusChamados(data || [])
+    const chamados = data || []
+
+    // Busca os dados das lixeiras vinculadas (se houver) pra exibir na lista
+    const idsLixeiras = [...new Set(chamados.filter(c => c.lixeira_id).map(c => c.lixeira_id))]
+
+    if (idsLixeiras.length > 0) {
+      const { data: lixeiras } = await supabase
+        .from("lixeiras")
+        .select("id, nome, predio")
+        .in("id", idsLixeiras)
+
+      const mapaLixeiras = Object.fromEntries((lixeiras || []).map(l => [l.id, l]))
+
+      setMeusChamados(chamados.map(c => ({
+        ...c,
+        lixeira: c.lixeira_id ? mapaLixeiras[c.lixeira_id] : null
+      })))
+    } else {
+      setMeusChamados(chamados)
+    }
+  }
+
+  // Trata o resultado do scanner de QR Code
+  async function handleScan(codigo) {
+    setScannerAberto(false)
+    setErroScan(null)
+
+    const match = codigo.match(REGEX_QR_LIXEIRA)
+
+    if (!match) {
+      setErroScan("QR Code inválido. Aponte para um QR Code de lixeira do ReciclAI.")
+      return
+    }
+
+    const id = parseInt(match[1], 10)
+
+    const { data, error } = await supabase
+      .from("lixeiras")
+      .select("id, nome, predio, tipo, cor")
+      .eq("id", id)
+      .single()
+
+    if (error || !data) {
+      setErroScan("Lixeira não encontrada no sistema.")
+      return
+    }
+
+    setLixeiraId(data.id)
+    setLixeiraInfo(data)
+  }
+
+  function removerLixeira() {
+    setLixeiraId(null)
+    setLixeiraInfo(null)
   }
 
   async function abrirChamado(e) {
@@ -83,13 +146,15 @@ function Chamados() {
           tipo,
           descricao,
           status: "pendente",
-          foto_url: null
+          foto_url: null,
+          lixeira_id: lixeiraId
         })
 
       if (error) throw error
 
       setTipo("Lixeira cheia")
       setDescricao("")
+      removerLixeira()
       setSucesso("Chamado aberto com sucesso!")
       setAba("pendentes")
     } catch (err) {
@@ -236,6 +301,44 @@ function Chamados() {
               className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-700 resize-none text-black"
             />
 
+            <label className="block text-blue-900 font-semibold mb-2">
+              Lixeira (opcional)
+            </label>
+
+            {lixeiraInfo ? (
+              <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPin size={18} className="text-emerald-700 flex-shrink-0" />
+                  <div>
+                    <p className="text-emerald-800 font-semibold text-sm">{lixeiraInfo.nome}</p>
+                    <p className="text-emerald-600 text-xs">{lixeiraInfo.predio} · {lixeiraInfo.tipo}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={removerLixeira}
+                  className="text-emerald-600 hover:text-emerald-800 cursor-pointer flex-shrink-0"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { setErroScan(null); setScannerAberto(true) }}
+                className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-xl mb-4 cursor-pointer hover:border-blue-700 hover:text-blue-700 transition text-sm font-semibold"
+              >
+                <QrCode size={18} />
+                Escanear QR da lixeira
+              </button>
+            )}
+
+            {erroScan && (
+              <div className="bg-amber-100 border border-amber-300 text-amber-800 p-3 rounded-xl mb-4 text-sm">
+                {erroScan}
+              </div>
+            )}
+
             {erro && (
               <div className="bg-red-100 border border-red-300 text-red-800 p-3 rounded-xl mb-4 text-sm">
                 {erro}
@@ -321,10 +424,24 @@ function Chamados() {
                     />
                   )}
                 </div>
+
+                {chamado.lixeira && (
+                  <div className="flex items-center gap-1.5 text-blue-700 text-xs font-semibold mt-3">
+                    <MapPin size={14} />
+                    {chamado.lixeira.nome} — {chamado.lixeira.predio}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
+      )}
+
+      {scannerAberto && (
+        <QrScanner
+          onScan={handleScan}
+          onClose={() => setScannerAberto(false)}
+        />
       )}
 
     </div>

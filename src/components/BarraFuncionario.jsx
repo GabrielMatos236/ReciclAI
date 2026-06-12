@@ -57,11 +57,11 @@ function BarraFuncionario() {
         style={{ padding: '2px', borderRadius: '9999px', overflow: 'hidden' }}
       >
         <div className="func-gradient-spin" />
-        <div className="relative z-10 bg-white rounded-full shadow-lg px-8 py-3 flex gap-8">
+        <div className="relative z-10 bg-white rounded-full shadow-lg flex overflow-hidden">
 
           {indiceAtivo !== -1 && pilulaStyle && (
             <div
-              className="absolute top-1/2 -translate-y-1/2 h-10 bg-gray-200 rounded-2xl z-0"
+              className="absolute inset-y-0 bg-gray-200 rounded-full z-0"
               style={{
                 left:  `${pilulaStyle.left}px`,
                 width: `${pilulaStyle.width}px`,
@@ -77,7 +77,7 @@ function BarraFuncionario() {
               key={rota}
               ref={el => (botoesRef.current[idx] = el)}
               onClick={() => navigate(rota)}
-              className={`p-2 rounded-full relative z-10 transition-colors duration-200 ${
+              className={`px-7 py-5 flex items-center justify-center relative z-10 transition-colors duration-200 ${
                 rotaAtual === rota ? 'text-blue-700' : 'text-gray-400'
               }`}
             >
