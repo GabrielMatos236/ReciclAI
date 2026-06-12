@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, CheckCircle2, User, ChevronDown } from 'lucide-react'
+import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, User, ChevronDown } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
@@ -11,6 +11,7 @@ function Home() {
   const navigate = useNavigate()
   const { perfil } = usePerfil()
   const [totalChamados, setTotalChamados] = useState(0)
+  const [posicaoRanking, setPosicaoRanking] = useState(null)
   const [dropdownAberto, setDropdownAberto] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -26,6 +27,20 @@ function Home() {
     }
     carregarChamados()
   }, [])
+
+  // Calcula a posição no ranking: conta quantos usuários têm MAIS pontos que eu
+  useEffect(() => {
+    async function carregarPosicaoRanking() {
+      if (!perfil) return
+      const { count } = await supabase
+        .from('perfis')
+        .select('*', { count: 'exact', head: true })
+        .eq('tipo', 'usuario')
+        .gt('pontos', perfil.pontos || 0)
+      setPosicaoRanking((count || 0) + 1)
+    }
+    carregarPosicaoRanking()
+  }, [perfil?.pontos])
 
   useEffect(() => {
     function handleClickFora(e) {
@@ -94,10 +109,18 @@ function Home() {
       {/* Card de stats */}
       <div className="px-6 -mt-14">
         <div className="bg-[#4AE273] border-2 border-[#015929] rounded-3xl p-5 shadow-lg">
-          <div className="flex items-center gap-3 mb-3">
-            <CheckCircle2 size={30} className="text-[#015929]" strokeWidth={2.5} />
-            <div className="flex-1 h-px bg-blue-900 opacity-40"></div>
-          </div>
+          <button
+            onClick={() => navigate('/recompensas')}
+            className="w-full flex items-center gap-2 mb-3 cursor-pointer group"
+          >
+            <Trophy size={24} className="text-[#015929]" strokeWidth={2.5} />
+            <p className="text-blue-900 font-bold text-sm flex-1 text-left">
+              {posicaoRanking ? `${posicaoRanking}º lugar no ranking` : 'Carregando ranking...'}
+            </p>
+            <span className="text-blue-900 text-xs font-semibold opacity-70 group-hover:opacity-100 transition">
+              Ver mais
+            </span>
+          </button>
           <div className="flex justify-around items-center">
             <div className="text-center">
               <p className="text-blue-900 text-xs">Chamados</p>
