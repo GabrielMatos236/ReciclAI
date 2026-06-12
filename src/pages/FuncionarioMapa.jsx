@@ -1,7 +1,7 @@
 import Mapa from "./Mapa"
 
 function FuncionarioMapa() {
-  return <Mapa mostrarAlertas />
+  return <Mapa mostrarAlertas={true} />
 }
 
 export default FuncionarioMapa
