@@ -1,14 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Trophy, Medal, Star } from 'lucide-react'
+import { ArrowLeft, Trophy, Medal, Star, Gift, CheckCircle2, Loader2 } from 'lucide-react'
 import { supabase } from '../services/supabase'
+import { usePerfil } from '../contexts/AuthContext'
 
 function Recompensas() {
   const navigate = useNavigate()
+  const { atualizarPerfil } = usePerfil()
+
   const [ranking, setRanking] = useState([])
   const [meuPerfil, setMeuPerfil] = useState(null)
   const [minhaPos, setMinhaPos] = useState(null)
   const [carregando, setCarregando] = useState(true)
+
+  // Loja de resgate
+  const [premios, setPremios] = useState([])
+  const [resgatando, setResgatando] = useState(null)
+  const [resgatadoId, setResgatadoId] = useState(null)
+  const [erroResgate, setErroResgate] = useState(null)
 
   useEffect(() => {
     async function carregar() {
@@ -40,11 +49,53 @@ function Recompensas() {
         }
       }
 
+      // Prêmios da loja, do mais barato pro mais caro
+      const { data: premiosData, error: premiosError } = await supabase
+        .from('premios')
+        .select('*')
+        .order('pontos', { ascending: true })
+
+      if (premiosError) {
+        console.error('Erro ao carregar prêmios:', premiosError)
+      } else {
+        setPremios(premiosData || [])
+      }
+
       setCarregando(false)
     }
 
     carregar()
   }, [])
+
+  // Resgata um prêmio: desconta os pontos do perfil no Supabase
+  // e atualiza tanto o estado local quanto o AuthContext global.
+  async function resgatar(premio) {
+    if (!meuPerfil || (meuPerfil.pontos || 0) < premio.pontos) return
+
+    setErroResgate(null)
+    setResgatando(premio.id)
+
+    const novosPontos = meuPerfil.pontos - premio.pontos
+
+    const { error } = await supabase
+      .from('perfis')
+      .update({ pontos: novosPontos })
+      .eq('id', meuPerfil.id)
+
+    setResgatando(null)
+
+    if (error) {
+      console.error(error)
+      setErroResgate('Erro ao resgatar prêmio. Tente novamente.')
+      return
+    }
+
+    setMeuPerfil(prev => ({ ...prev, pontos: novosPontos }))
+    atualizarPerfil({ pontos: novosPontos })
+
+    setResgatadoId(premio.id)
+    setTimeout(() => setResgatadoId(prev => prev === premio.id ? null : prev), 2000)
+  }
 
   function iconePos(pos) {
     if (pos === 1) return <Trophy size={20} className="text-yellow-500" />
@@ -142,6 +193,92 @@ function Recompensas() {
               </div>
             )
           })()}
+
+          {/* Loja de resgate */}
+          <div>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Gift size={18} className="text-blue-900" />
+              <p className="text-blue-900 font-bold text-base">Loja de Resgate</p>
+            </div>
+
+            {erroResgate && (
+              <div className="bg-red-100 border border-red-300 text-red-800 p-3 rounded-xl mb-3 text-sm">
+                {erroResgate}
+              </div>
+            )}
+
+            {premios.length === 0 ? (
+              <p className="text-gray-400 text-sm text-center py-6">
+                Nenhum prêmio disponível no momento.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {premios.map((premio) => {
+                  const meusPontos   = meuPerfil?.pontos || 0
+                  const podeResgatar = meusPontos >= premio.pontos
+                  const estaResgatando = resgatando === premio.id
+                  const foiResgatado   = resgatadoId === premio.id
+
+                  return (
+                    <div
+                      key={premio.id}
+                      className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col"
+                    >
+                      <div className="bg-gray-50 aspect-square flex items-center justify-center p-4">
+                        <img
+                          src={premio.imagem_url}
+                          alt={premio.nome}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+
+                      <div className="p-3 flex flex-col gap-2 flex-1">
+                        <p className="text-blue-900 font-bold text-sm leading-tight">
+                          {premio.nome}
+                        </p>
+
+                        {premio.descricao && (
+                          <p className="text-gray-500 text-xs leading-snug">
+                            {premio.descricao}
+                          </p>
+                        )}
+
+                        <span className="self-start bg-[#4AE273] text-[#015929] px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                          <Star size={12} />
+                          {premio.pontos} pts
+                        </span>
+
+                        <button
+                          onClick={() => resgatar(premio)}
+                          disabled={!podeResgatar || estaResgatando}
+                          className={`mt-auto w-full py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5 transition ${
+                            foiResgatado
+                              ? 'bg-emerald-500 text-white cursor-default'
+                              : !podeResgatar
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-blue-900 text-white cursor-pointer hover:bg-blue-800'
+                          }`}
+                        >
+                          {estaResgatando ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : foiResgatado ? (
+                            <>
+                              <CheckCircle2 size={16} />
+                              Resgatado!
+                            </>
+                          ) : !podeResgatar ? (
+                            'Pontos insuficientes'
+                          ) : (
+                            'Resgatar'
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Tabela de níveis */}
           <div className="bg-white rounded-3xl p-4 border border-gray-200">
