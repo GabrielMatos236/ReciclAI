@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronUp, ArrowLeft, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 import LixeiraAzul from '../assets/Lixeira_Azul.png'
+import LixeiraVermelha from '../assets/Lixeira_Vermelha.png'
+import LixeiraVerde from '../assets/Lixeira_Verde.png'
+import LixeiraAmarela from '../assets/Lixeira_Amarela.png'
+import LixeiraMarrom from '../assets/Lixeira_Marrom.png'
 
 const CATEGORIAS = [
   {
@@ -41,7 +45,7 @@ const CATEGORIAS = [
     id: 'plastico',
     label: 'Plástico',
     cor: '#b91c1c',
-    icone: '🧴',
+    icone: LixeiraVermelha,
     descricao: 'Sempre enxágue as embalagens antes de descartar. Resíduos de alimentos contaminam toda a carga.',
     reciclaveis: [
       'Garrafas PET (água, suco, refrigerante)',
@@ -70,7 +74,7 @@ const CATEGORIAS = [
     id: 'vidro',
     label: 'Vidro',
     cor: '#15803d',
-    icone: '🍾',
+    icone: LixeiraVerde,
     descricao: 'Evite acidentes: se o vidro estiver quebrado, envolva em papel antes de descartar. Limpe frascos de alimentos antes do descarte.',
     reciclaveis: [
       'Garrafas de bebidas (refrigerante, cerveja, vinho)',
@@ -93,7 +97,7 @@ const CATEGORIAS = [
     id: 'metal',
     label: 'Metal',
     cor: '#f5ca03',
-    icone: '🥫',
+    icone: LixeiraAmarela,
     descricao: 'Amasse as latas antes de descartar — ocupam menos espaço e facilitam o transporte até a cooperativa.',
     reciclaveis: [
       'Latas de alumínio (cerveja, refrigerante)',
@@ -117,7 +121,7 @@ const CATEGORIAS = [
     id: 'organico',
     label: 'Orgânico',
     cor: '#92400e',
-    icone: '🍃',
+    icone: LixeiraMarrom,
     descricao: 'Resíduos orgânicos podem virar adubo via compostagem. Evite misturar com recicláveis.',
     reciclaveis: [
       'Cascas de frutas e legumes',
@@ -134,28 +138,6 @@ const CATEGORIAS = [
     ],
     complicados: [
       'Fraldas e absorventes (rejeito — lixo comum)',
-    ],
-  },
-  {
-    id: 'nao-reciclavel',
-    label: 'Não-reciclável (Rejeito)',
-    cor: '#4b5563',
-    icone: '🗑️',
-    descricao: 'Rejeitos são resíduos que não têm aproveitamento na reciclagem nem na compostagem. Vão para o lixo comum.',
-    reciclaveis: [],
-    nao: [
-      'Papel higiênico e lenço usados',
-      'Esponjas de cozinha',
-      'Cerâmicas e porcelanas',
-      'Fitas adesivas',
-      'Cabelos e pelos',
-      'Bitucas de cigarro',
-      'Velas e cera',
-    ],
-    complicados: [
-      'Eletrônicos (e-lixo — ponto de coleta específico)',
-      'Pilhas e baterias (ponto de coleta específico)',
-      'Medicamentos vencidos (devolva à farmácia)',
     ],
   },
 ]
