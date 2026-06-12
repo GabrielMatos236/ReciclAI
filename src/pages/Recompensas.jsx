@@ -116,7 +116,7 @@ function Recompensas() {
     { nome: 'Iniciante',     min: 0,    max: 499,      cor: 'bg-amber-200',  texto: 'text-amber-900' },
     { nome: 'Consciente',    min: 500,  max: 1499,     cor: 'bg-slate-200',  texto: 'text-slate-700' },
     { nome: 'Reciclador',    min: 1500, max: 3499,     cor: 'bg-yellow-200', texto: 'text-yellow-800' },
-    { nome: 'Ecologista',    min: 3500, max: 6999,     cor: 'bg-zinc-100 border border-zinc-300', texto: 'text-zinc-700' },
+    { nome: 'Ecologista',    min: 3500, max: 6999,     cor: 'bg-gradient-to-r from-rose-200 via-red-300 to-rose-400 border border-red-300', texto: 'text-red-900' },
     { nome: 'Ambientalista', min: 7000, max: Infinity, cor: 'bg-gradient-to-r from-cyan-100 via-slate-100 to-blue-200 border border-blue-200', texto: 'text-blue-900' },
   ]
 
