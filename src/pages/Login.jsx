@@ -24,6 +24,7 @@ function Login() {
 
   const [nome, setNome]     = useState('')
   const [tipo, setTipo]     = useState('usuario')
+  const [codigoFuncionario, setCodigoFuncionario] = useState('')
 
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro]             = useState(null)
@@ -98,6 +99,16 @@ function Login() {
     setCarregando(true)
     setErro(null)
     try {
+      // Cadastro como funcionário exige um código de acesso (definido no .env)
+      if (tipo === 'funcionario') {
+        const codigoCorreto = import.meta.env.VITE_CODIGO_FUNCIONARIO
+        if (!codigoCorreto || codigoFuncionario !== codigoCorreto) {
+          setErro('Código de acesso de funcionário inválido.')
+          setCarregando(false)
+          return
+        }
+      }
+
       // O trigger on_auth_user_created cria o perfil automaticamente
       // usando nome e tipo passados via options.data
       const { error } = await supabase.auth.signUp({
@@ -256,7 +267,7 @@ function Login() {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setTipo('usuario')}
+                onClick={() => { setTipo('usuario'); setCodigoFuncionario('') }}
                 className="flex-1 py-3 rounded-2xl font-semibold text-sm cursor-pointer transition"
                 style={{
                   background: tipo === 'usuario' ? '#1e3a8a' : '#f3f4f6',
@@ -277,6 +288,17 @@ function Login() {
                 Funcionário(a)
               </button>
             </div>
+          )}
+
+          {ehCadastro && tipo === 'funcionario' && (
+            <input
+              type="password"
+              placeholder="Código de acesso de funcionário"
+              value={codigoFuncionario}
+              onChange={e => setCodigoFuncionario(e.target.value)}
+              required
+              className="w-full px-4 py-3.5 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-blue-700 bg-gray-50"
+            />
           )}
 
           {erro && (
