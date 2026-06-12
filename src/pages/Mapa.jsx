@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { Icon } from 'leaflet'
-import { ChevronUp, ChevronDown, X } from 'lucide-react'
+import { Icon, DivIcon } from 'leaflet'
+import { ChevronUp, ChevronDown, X, AlertTriangle } from 'lucide-react'
 import { supabase } from '../services/supabase'
 
 const CONFIG_CORES = {
@@ -26,7 +26,30 @@ function criarIcone(cor) {
   })
 }
 
-function Mapa() {
+// Mesmo ícone, mas com um anel pulsante atrás — usado pra destacar
+// lixeiras que têm um chamado ativo (visão do funcionário)
+function criarIconeAlerta(cor) {
+  const config = CONFIG_CORES[cor] || { iconUrl: 'grey' }
+  const iconUrl = `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${config.iconUrl}.png`
+
+  return new DivIcon({
+    html: `
+      <div class="marcador-alerta">
+        <div class="marcador-alerta-pulso"></div>
+        <img src="${iconUrl}" />
+      </div>
+    `,
+    className: '',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
+  })
+}
+
+// Mapa do campus com filtros. Quando `mostrarAlertas` é true (painel do
+// funcionário), lixeiras com chamado pendente/aceito ficam com um
+// marcador piscante.
+function Mapa({ mostrarAlertas = false }) {
   const location = useLocation()
 
   const [lixeiras, setLixeiras]         = useState([])
@@ -34,6 +57,7 @@ function Mapa() {
   const [filtroPredio, setFiltroPredio] = useState(null)
   const [filtroTipo,   setFiltroTipo]   = useState(location.state?.filtroTipo || null)
   const [painelAberto, setPainelAberto] = useState(!!location.state?.filtroTipo)
+  const [lixeirasComAlerta, setLixeirasComAlerta] = useState(new Set())
 
   const centroMapa = [-30.033217, -51.122785]
 
@@ -55,6 +79,28 @@ function Mapa() {
     carregarLixeiras()
   }, [])
 
+  // Busca lixeiras com chamado pendente/aceito vinculado (só pro funcionário)
+  useEffect(() => {
+    if (!mostrarAlertas) return
+
+    async function carregarAlertas() {
+      const { data, error } = await supabase
+        .from('chamados')
+        .select('lixeira_id')
+        .in('status', ['pendente', 'aceito'])
+        .not('lixeira_id', 'is', null)
+
+      if (error) {
+        console.error('Erro ao carregar alertas:', error)
+        return
+      }
+
+      setLixeirasComAlerta(new Set((data || []).map(c => c.lixeira_id)))
+    }
+
+    carregarAlertas()
+  }, [mostrarAlertas])
+
   const lixeirasFiltradas = lixeiras.filter(l => {
     const passaPredio = !filtroPredio || l.predio === filtroPredio
     const passaTipo   = !filtroTipo   || l.tipo   === filtroTipo
@@ -70,6 +116,40 @@ function Mapa() {
 
   return (
     <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
+
+      {/* Animação do marcador de alerta */}
+      {mostrarAlertas && (
+        <style>{`
+          .marcador-alerta {
+            position: relative;
+            width: 25px;
+            height: 41px;
+          }
+          .marcador-alerta img {
+            position: relative;
+            z-index: 2;
+            width: 25px;
+            height: 41px;
+          }
+          .marcador-alerta-pulso {
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.6);
+            z-index: 1;
+            animation: pulso-alerta 1.6s ease-out infinite;
+          }
+          @keyframes pulso-alerta {
+            0%   { transform: translateX(-50%) scale(1);   opacity: 0.7; }
+            70%  { transform: translateX(-50%) scale(3);   opacity: 0;   }
+            100% { transform: translateX(-50%) scale(3);   opacity: 0;   }
+          }
+        `}</style>
+      )}
 
       {/* Header */}
       <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center flex-shrink-0">
@@ -101,23 +181,33 @@ function Mapa() {
                 attribution='&copy; OpenStreetMap'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {lixeirasFiltradas.map((lixeira) => (
-                <Marker
-                  key={lixeira.id}
-                  position={[lixeira.latitude, lixeira.longitude]}
-                  icon={criarIcone(lixeira.cor)}
-                >
-                  <Popup>
-                    <div className="text-center">
-                      <strong>{lixeira.nome}</strong><br />
-                      Tipo: {lixeira.tipo}<br />
-                      <span style={{ color: CONFIG_CORES[lixeira.cor]?.hex }}>
-                        Lixeira {lixeira.cor}
-                      </span>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
+              {lixeirasFiltradas.map((lixeira) => {
+                const temAlerta = mostrarAlertas && lixeirasComAlerta.has(lixeira.id)
+
+                return (
+                  <Marker
+                    key={lixeira.id}
+                    position={[lixeira.latitude, lixeira.longitude]}
+                    icon={temAlerta ? criarIconeAlerta(lixeira.cor) : criarIcone(lixeira.cor)}
+                  >
+                    <Popup>
+                      <div className="text-center">
+                        <strong>{lixeira.nome}</strong><br />
+                        Tipo: {lixeira.tipo}<br />
+                        <span style={{ color: CONFIG_CORES[lixeira.cor]?.hex }}>
+                          Lixeira {lixeira.cor}
+                        </span>
+                        {temAlerta && (
+                          <div className="flex items-center justify-center gap-1 text-red-600 font-semibold mt-1">
+                            <AlertTriangle size={14} />
+                            Chamado em aberto
+                          </div>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                )
+              })}
             </MapContainer>
           )}
         </div>
