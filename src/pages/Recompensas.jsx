@@ -113,11 +113,11 @@ function Recompensas() {
   }
 
   const NIVEIS = [
-    { nome: 'Iniciante',   min: 0,   max: 499,  cor: 'bg-gray-200',   texto: 'text-gray-700' },
-    { nome: 'Consciente',  min: 500,  max: 1499, cor: 'bg-[#4AE273]',  texto: 'text-[#015929]' },
-    { nome: 'Reciclador',    min: 1500, max: 3499, cor: 'bg-blue-200',   texto: 'text-blue-800' },
-    { nome: 'Ecologista',   min: 3500, max: 6999, cor: 'bg-purple-200', texto: 'text-purple-800' },
-    { nome: 'Ambientalista', min: 7000, max: Infinity, cor: 'bg-[#4AE273]', texto: 'text-[#015929]' },
+    { nome: 'Iniciante',     min: 0,    max: 499,      cor: 'bg-amber-200',  texto: 'text-amber-900' },
+    { nome: 'Consciente',    min: 500,  max: 1499,     cor: 'bg-slate-200',  texto: 'text-slate-700' },
+    { nome: 'Reciclador',    min: 1500, max: 3499,     cor: 'bg-yellow-200', texto: 'text-yellow-800' },
+    { nome: 'Ecologista',    min: 3500, max: 6999,     cor: 'bg-zinc-100 border border-zinc-300', texto: 'text-zinc-700' },
+    { nome: 'Ambientalista', min: 7000, max: Infinity, cor: 'bg-gradient-to-r from-cyan-100 via-slate-100 to-blue-200 border border-blue-200', texto: 'text-blue-900' },
   ]
 
   function nivelAtual(pontos) {
