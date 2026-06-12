@@ -6,7 +6,7 @@
 // faixa de pontos, nome ou cor de um nível, muda só AQUI.
 
 export const NIVEIS = [
-  { nome: 'Iniciante',     min: 0,    max: 499,      cor: 'bg-amber-200',  texto: 'text-amber-900' },
+  { nome: 'Iniciante',     min: 0,    max: 499,      cor: 'bg-orange-300',  texto: 'text-orange-900' },
   { nome: 'Consciente',    min: 500,  max: 1499,     cor: 'bg-slate-200',  texto: 'text-slate-700' },
   { nome: 'Reciclador',    min: 1500, max: 3499,     cor: 'bg-yellow-200', texto: 'text-yellow-800' },
   { nome: 'Ecologista',    min: 3500, max: 6999,     cor: 'bg-zinc-100 border border-zinc-300', texto: 'text-zinc-700' },
