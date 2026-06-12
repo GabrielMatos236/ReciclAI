@@ -297,18 +297,18 @@ function Perfil() {
                                     <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                                         <span className="text-blue-700 text-xs font-bold">G</span>
                                     </div>
-                                    <p className="text-blue-900 text-sm font-semibold">Gabriel Matos</p>
+                                    <p className="text-blue-900 text-sm font-semibold">Gabriel Matos Ataide</p>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                                         <span className="text-blue-700 text-xs font-bold">R</span>
                                     </div>
-                                    <p className="text-blue-900 text-sm font-semibold">Rafael</p>
+                                    <p className="text-blue-900 text-sm font-semibold">Rafael Magnus de Lima Cerutti</p>
                                 </div>
                             </div>
 
                             <p className="text-gray-400 text-xs">
-                                Projeto acadêmico sobre descarte sustentável e classificação de resíduos por IA. 🌱
+                                Stay tuned for more!
                             </p>
                         </div>
                     )}
