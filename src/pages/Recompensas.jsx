@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Trophy, Medal, Star, Gift, CheckCircle2, Loader2 } from 'lucide-react'
 import { supabase } from '../services/supabase'
 import { usePerfil } from '../contexts/AuthContext'
+import { NIVEIS, nivelAtual, proximoNivel } from '../utils/niveis'
 
 function Recompensas() {
   const navigate = useNavigate()
@@ -112,28 +113,11 @@ function Recompensas() {
     return 'bg-white border border-gray-100'
   }
 
-  const NIVEIS = [
-    { nome: 'Iniciante',     min: 0,    max: 499,      cor: 'bg-amber-200',  texto: 'text-amber-900' },
-    { nome: 'Consciente',    min: 500,  max: 1499,     cor: 'bg-slate-200',  texto: 'text-slate-700' },
-    { nome: 'Reciclador',    min: 1500, max: 3499,     cor: 'bg-yellow-200', texto: 'text-yellow-800' },
-    { nome: 'Ecologista',    min: 3500, max: 6999,     cor: 'bg-gradient-to-r from-rose-200 via-red-300 to-rose-400 border border-red-300', texto: 'text-red-900' },
-    { nome: 'Ambientalista', min: 7000, max: Infinity, cor: 'bg-gradient-to-r from-cyan-100 via-slate-100 to-blue-200 border border-blue-200', texto: 'text-blue-900' },
-  ]
-
-  function nivelAtual(pontos) {
-    return NIVEIS.find(n => pontos >= n.min && pontos <= n.max) || NIVEIS[0]
-  }
-
-  function proximoNivel(pontos) {
-    const idx = NIVEIS.findIndex(n => pontos >= n.min && pontos <= n.max)
-    return idx < NIVEIS.length - 1 ? NIVEIS[idx + 1] : null
-  }
-
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
 
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center relative">
+      <div className="bg-gradient-to-tr from-blue-950 to-blue-700 h-28 rounded-b-[12px] flex flex-col items-center justify-center relative">
         <button
           onClick={() => navigate('/home')}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-blue-800/60 p-2 rounded-full cursor-pointer hover:bg-blue-800 transition"
