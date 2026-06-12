@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, CheckCircle, XCircle, ClipboardCheck, Clock } from "lucide-react"
+import { ArrowLeft, CheckCircle, XCircle, ClipboardCheck, Clock, User, Eye, EyeOff, MapPin } from "lucide-react"
 import { supabase } from "../services/supabase"
+import MiniMapaLixeira from "../components/MiniMapaLixeira"
 import Text from "../assets/Text.png"
 
 function FuncionarioChamados() {
@@ -11,6 +12,9 @@ function FuncionarioChamados() {
   const [chamados, setChamados] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
+
+  // Controla quais chamados "aceitos" estão com os detalhes expandidos
+  const [expandido, setExpandido] = useState({})
 
   useEffect(() => {
     carregarChamados()
@@ -37,9 +41,43 @@ function FuncionarioChamados() {
       console.error(error)
       setErro("Erro ao carregar chamados")
       setChamados([])
-    } else {
-      setChamados(data || [])
+      setCarregando(false)
+      return
     }
+
+    const lista = data || []
+
+    // Busca o nome de quem abriu cada chamado
+    const idsUsuarios = [...new Set(lista.map(c => c.usuario_id))]
+    let mapaUsuarios = {}
+
+    if (idsUsuarios.length > 0) {
+      const { data: perfis } = await supabase
+        .from("perfis")
+        .select("id, nome")
+        .in("id", idsUsuarios)
+
+      mapaUsuarios = Object.fromEntries((perfis || []).map(p => [p.id, p.nome]))
+    }
+
+    // Busca os dados das lixeiras vinculadas via QR Code
+    const idsLixeiras = [...new Set(lista.filter(c => c.lixeira_id).map(c => c.lixeira_id))]
+    let mapaLixeiras = {}
+
+    if (idsLixeiras.length > 0) {
+      const { data: lixeiras } = await supabase
+        .from("lixeiras")
+        .select("*")
+        .in("id", idsLixeiras)
+
+      mapaLixeiras = Object.fromEntries((lixeiras || []).map(l => [l.id, l]))
+    }
+
+    setChamados(lista.map(c => ({
+      ...c,
+      usuarioNome: mapaUsuarios[c.usuario_id] || "Usuário",
+      lixeira: c.lixeira_id ? mapaLixeiras[c.lixeira_id] : null
+    })))
 
     setCarregando(false)
   }
@@ -57,6 +95,16 @@ function FuncionarioChamados() {
     }
 
     carregarChamados()
+  }
+
+  // Aceita o chamado e já abre os detalhes automaticamente
+  async function aceitarChamado(id) {
+    await atualizarStatus(id, "aceito")
+    setExpandido(prev => ({ ...prev, [id]: true }))
+  }
+
+  function toggleExpandido(id) {
+    setExpandido(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
   function textoStatus(status) {
@@ -175,54 +223,84 @@ function FuncionarioChamados() {
         )}
 
         <div className="space-y-4">
-          {chamados.map((chamado) => (
-            <div
-              key={chamado.id}
-              className="bg-white rounded-3xl p-5 shadow-lg"
-            >
-              <div className="flex justify-between items-start gap-3 mb-3">
-                <div>
-                  <h2 className="text-blue-900 text-lg font-bold">
-                    {chamado.tipo}
-                  </h2>
+          {chamados.map((chamado) => {
+            const estaExpandido = !!expandido[chamado.id]
 
-                  <p className="text-gray-500 text-sm">
-                    Criado em{" "}
-                    {new Date(chamado.created_at).toLocaleDateString("pt-BR")}
-                  </p>
+            return (
+              <div
+                key={chamado.id}
+                className="bg-white rounded-3xl p-5 shadow-lg"
+              >
+                <div className="flex justify-between items-start gap-3 mb-3">
+                  <div>
+                    <h2 className="text-blue-900 text-lg font-bold">
+                      {chamado.tipo}
+                    </h2>
+
+                    <p className="text-gray-500 text-sm">
+                      Criado em{" "}
+                      {new Date(chamado.created_at).toLocaleDateString("pt-BR")}
+                    </p>
+                  </div>
+
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${corStatus(chamado.status)}`}>
+                    {textoStatus(chamado.status)}
+                  </span>
                 </div>
 
-                <span className={`text-xs font-bold px-3 py-1 rounded-full ${corStatus(chamado.status)}`}>
-                  {textoStatus(chamado.status)}
-                </span>
-              </div>
+                <div className="bg-gray-100 rounded-2xl p-4 space-y-2">
+                  <p className="text-gray-700">
+                    <strong className="text-blue-900">Descrição:</strong>{" "}
+                    {chamado.descricao}
+                  </p>
 
-              <div className="bg-gray-100 rounded-2xl p-4 space-y-2">
-                <p className="text-gray-700">
-                  <strong className="text-blue-900">Descrição:</strong>{" "}
-                  {chamado.descricao}
-                </p>
+                  {chamado.foto_url && (
+                    <img
+                      src={chamado.foto_url}
+                      alt="Foto do chamado"
+                      className="w-full rounded-xl mt-3"
+                    />
+                  )}
+                </div>
 
-                {chamado.foto_url && (
-                  <img
-                    src={chamado.foto_url}
-                    alt="Foto do chamado"
-                    className="w-full rounded-xl mt-3"
-                  />
+                {/* Badge da lixeira — visível mesmo sem expandir */}
+                {chamado.lixeira && !estaExpandido && (
+                  <div className="flex items-center gap-1.5 text-blue-700 text-xs font-semibold mt-3">
+                    <MapPin size={14} />
+                    {chamado.lixeira.nome} — {chamado.lixeira.predio}
+                  </div>
                 )}
-              </div>
 
-              {aba === "pendentes" && (
-                <div className="mt-4 space-y-2">
-                  <button
-                    onClick={() => atualizarStatus(chamado.id, "aceito")}
-                    className="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-800 transition"
-                  >
-                    <Clock size={18} />
-                    Aceitar
-                  </button>
+                {/* Detalhes expandidos — só pra chamados aceitos */}
+                {estaExpandido && (
+                  <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <User size={16} className="text-blue-700 flex-shrink-0" />
+                      <span className="text-gray-500">Aberto por:</span>
+                      <span className="text-blue-900 font-semibold">{chamado.usuarioNome}</span>
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                    {chamado.lixeira ? (
+                      <MiniMapaLixeira lixeira={chamado.lixeira} />
+                    ) : (
+                      <p className="text-gray-400 text-xs italic">
+                        Nenhuma lixeira vinculada a este chamado.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Ações — chamado ainda pendente: aceitar ou rejeitar */}
+                {aba === "pendentes" && chamado.status === "pendente" && (
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => aceitarChamado(chamado.id)}
+                      className="bg-blue-900 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-800 transition"
+                    >
+                      <Clock size={18} />
+                      Aceitar
+                    </button>
+
                     <button
                       onClick={() => atualizarStatus(chamado.id, "rejeitado")}
                       className="bg-red-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-red-700 transition"
@@ -230,19 +308,44 @@ function FuncionarioChamados() {
                       <XCircle size={18} />
                       Rejeitar
                     </button>
-
-                    <button
-                      onClick={() => atualizarStatus(chamado.id, "encerrado")}
-                      className="bg-emerald-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-emerald-600 transition"
-                    >
-                      <CheckCircle size={18} />
-                      Realizado
-                    </button>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+
+                {/* Ações — chamado aceito: visualizar detalhes + finalizar */}
+                {aba === "pendentes" && chamado.status === "aceito" && (
+                  <div className="mt-4 space-y-2">
+                    <button
+                      onClick={() => toggleExpandido(chamado.id)}
+                      className="w-full bg-blue-50 text-blue-900 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-100 transition"
+                    >
+                      {estaExpandido ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {estaExpandido ? "Ocultar detalhes" : "Visualizar"}
+                    </button>
+
+                    {estaExpandido && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => atualizarStatus(chamado.id, "rejeitado")}
+                          className="bg-red-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-red-700 transition"
+                        >
+                          <XCircle size={18} />
+                          Rejeitar
+                        </button>
+
+                        <button
+                          onClick={() => atualizarStatus(chamado.id, "encerrado")}
+                          className="bg-emerald-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer hover:bg-emerald-600 transition"
+                        >
+                          <CheckCircle size={18} />
+                          Realizado
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

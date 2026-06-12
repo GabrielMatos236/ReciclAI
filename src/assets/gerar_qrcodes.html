@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Codes - Lixeiras ReciclAI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 24px;
+      background: #f3f4f6;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 4px;
+      color: #1e3a8a;
+    }
+    p.subtitulo {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+    .botao-imprimir {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: #1d4ed8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 700px;
+    }
+    .cartao {
+      background: white;
+      border: 2px dashed #9ca3af;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .cartao canvas {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+    }
+    .cartao .titulo {
+      font-weight: bold;
+      font-size: 15px;
+      color: #1e3a8a;
+      text-align: center;
+    }
+    .cartao .info {
+      font-size: 12px;
+      color: #6b7280;
+      text-align: center;
+    }
+    .cartao .codigo {
+      font-size: 10px;
+      color: #9ca3af;
+      font-family: monospace;
+      margin-top: 4px;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .botao-imprimir { display: none; }
+      .grade { gap: 8px; }
+      .cartao { border: 1px dashed #9ca3af; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>QR Codes — Lixeiras ReciclAI</h1>
+  <p class="subtitulo">
+    Cada QR aponta para uma lixeira específica do mapa. Recorte e cole na lixeira correspondente.
+  </p>
+
+  <button class="botao-imprimir" onclick="window.print()">Imprimir</button>
+
+  <div class="grade" id="grade"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>
+    // Edite esta lista com os IDs reais das lixeiras que você quer imprimir
+    const LIXEIRAS = [
+      { id: 1,  label: 'Lixeira 1'  },
+      { id: 2,  label: 'Lixeira 2'  },
+      { id: 3,  label: 'Lixeira 3'  },
+      { id: 4,  label: 'Lixeira 4'  },
+      { id: 5,  label: 'Lixeira 5'  },
+      { id: 6,  label: 'Lixeira 6'  },
+      { id: 7,  label: 'Lixeira 7'  },
+      { id: 8,  label: 'Lixeira 8'  },
+      { id: 9,  label: 'Lixeira 9'  },
+      { id: 10, label: 'Lixeira 10' },
+    ]
+
+    const grade = document.getElementById('grade')
+
+    LIXEIRAS.forEach(({ id, label }) => {
+      const codigo = `RECICLAI-LIXEIRA-${id}`
+
+      const cartao = document.createElement('div')
+      cartao.className = 'cartao'
+
+      const canvas = document.createElement('canvas')
+      cartao.appendChild(canvas)
+
+      const titulo = document.createElement('div')
+      titulo.className = 'titulo'
+      titulo.textContent = label
+      cartao.appendChild(titulo)
+
+      const info = document.createElement('div')
+      info.className = 'info'
+      info.textContent = `ID no banco: ${id}`
+      cartao.appendChild(info)
+
+      const codigoEl = document.createElement('div')
+      codigoEl.className = 'codigo'
+      codigoEl.textContent = codigo
+      cartao.appendChild(codigoEl)
+
+      grade.appendChild(cartao)
+
+      QRCode.toCanvas(canvas, codigo, { width: 200, margin: 1 })
+    })
+  </script>
+
+</body>
+</html>
