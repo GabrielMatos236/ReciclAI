@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, User, ChevronDown, Medal } from 'lucide-react'
+import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, User, ChevronDown, Star } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
@@ -101,11 +101,11 @@ function Home() {
             onClick={() => navigate('/recompensas')}
             className="w-full flex items-center gap-2 mb-3 cursor-pointer group"
           >
-            <Medal size={24} className={nivel.texto} strokeWidth={2.5} />
-            <p className="text-blue-900 font-bold text-sm flex-1 text-left">
-              Nível {nivel.nome}
-            </p>
-            <span className="text-blue-900 text-xs font-semibold opacity-70 group-hover:opacity-100 transition">
+            <span className={`${nivel.cor} ${nivel.texto} px-3 py-1.5 rounded-2xl text-sm font-bold flex items-center gap-1.5`}>
+              <Star size={14} />
+              {nivel.nome}
+            </span>
+            <span className="text-blue-900 text-xs font-semibold opacity-70 group-hover:opacity-100 transition ml-auto">
               Ver mais
             </span>
           </button>
