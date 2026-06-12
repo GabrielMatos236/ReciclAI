@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, User, ChevronDown } from 'lucide-react'
+import { Trash2, Recycle, MapPin, Trophy, Camera as CameraIcon, LogOut, User, ChevronDown, Medal } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { usePerfil } from '../contexts/AuthContext'
 import { supabase } from '../services/supabase'
+import { nivelAtual } from '../utils/niveis'
 import Text from '../assets/Text.png'
 import { useRef } from 'react'
 
@@ -11,7 +12,6 @@ function Home() {
   const navigate = useNavigate()
   const { perfil } = usePerfil()
   const [totalChamados, setTotalChamados] = useState(0)
-  const [posicaoRanking, setPosicaoRanking] = useState(null)
   const [dropdownAberto, setDropdownAberto] = useState(false)
   const dropdownRef = useRef(null)
 
@@ -28,20 +28,6 @@ function Home() {
     carregarChamados()
   }, [])
 
-  // Calcula a posição no ranking: conta quantos usuários têm MAIS pontos que eu
-  useEffect(() => {
-    async function carregarPosicaoRanking() {
-      if (!perfil) return
-      const { count } = await supabase
-        .from('perfis')
-        .select('*', { count: 'exact', head: true })
-        .eq('tipo', 'usuario')
-        .gt('pontos', perfil.pontos || 0)
-      setPosicaoRanking((count || 0) + 1)
-    }
-    carregarPosicaoRanking()
-  }, [perfil?.pontos])
-
   useEffect(() => {
     function handleClickFora(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -56,6 +42,8 @@ function Home() {
     await supabase.auth.signOut()
     navigate('/')
   }
+
+  const nivel = nivelAtual(perfil?.pontos || 0)
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
@@ -113,9 +101,9 @@ function Home() {
             onClick={() => navigate('/recompensas')}
             className="w-full flex items-center gap-2 mb-3 cursor-pointer group"
           >
-            <Trophy size={24} className="text-[#015929]" strokeWidth={2.5} />
+            <Medal size={24} className={nivel.texto} strokeWidth={2.5} />
             <p className="text-blue-900 font-bold text-sm flex-1 text-left">
-              {posicaoRanking ? `${posicaoRanking}º lugar no ranking` : 'Carregando ranking...'}
+              Nível {nivel.nome}
             </p>
             <span className="text-blue-900 text-xs font-semibold opacity-70 group-hover:opacity-100 transition">
               Ver mais
