@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronUp, ArrowLeft, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
+import LixeiraAzul from '../assets/Lixeira_Azul.png'
 
 const CATEGORIAS = [
   {
     id: 'papel',
     label: 'Papel e Papelão',
     cor: '#1e40af',
-    icone: '📄',
+    icone: LixeiraAzul,
     descricao: 'Para descarte, os papéis devem estar secos e limpos, sem gordura ou cola.',
     reciclaveis: [
       'Jornais e revistas',
@@ -254,9 +255,15 @@ function Aprenda() {
                 className="w-full flex items-center gap-4 px-5 py-4 cursor-pointer transition-opacity active:opacity-80"
                 style={{ backgroundColor: cat.cor }}
               >
-                <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 text-xl">
-                  {cat.icone}
-                </div>
+                {/\.(png|jpe?g|svg|webp)$/i.test(cat.icone) ? (
+                  <div className="w-11 h-11 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src={cat.icone} alt="" className="w-8 h-8 object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 text-xl">
+                    {cat.icone}
+                  </div>
+                )}
                 <span className="flex-1 text-left font-bold text-lg text-white">
                   {cat.label}
                 </span>
