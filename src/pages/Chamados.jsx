@@ -167,7 +167,7 @@ function Chamados() {
 
   function textoStatus(status) {
     if (status === "pendente") return "Pendente"
-    if (status === "aceito") return "Aceito"
+    if (status === "aceito") return "Analisando"
     if (status === "rejeitado") return "Rejeitado"
     if (status === "encerrado") return "Encerrado"
     return status
