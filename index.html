@@ -1,15 +1,16 @@
+<!-- #1 Hierarquia do fluxo da aplicação -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="src\assets\logo.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" type="image/svg+xml" href="src\assets\logo.png" /> <!-- Aqui fica o favicon -->
+    <link rel="manifest" href="/manifest.json" /> <!--Aqui o código puxa o arquivo para o ícone do app baixado -->
+    <link rel="apple-touch-icon" href="/logo.png" /> <!--Aqui o código puxa o arquivo para o ícone do app baixado em IOs -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ReciclAI</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div id="root"></div> <!-- Essa div root é vazia, o React põe o app inteiro aqui dentro -->
+    <script type="module" src="/src/main.jsx"></script> <!-- importa o script inicializador -->
   </body>
 </html>
